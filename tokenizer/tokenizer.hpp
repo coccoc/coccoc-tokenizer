@@ -149,6 +149,10 @@ public:
 
 		for (int i = from; i <= length; ++i)
 		{
+			if (i != from && !VnLangTool::is_alphanumeric(text[i - 1]))
+			{
+				last_delimiter_pos = i - 1;
+			}
 			// If appending the current character don't make the buffer out of dict, then do it
 			if (in_dict && i < length && multiterm_trie.has_child(cur_node, text[i]))
 			{
@@ -169,14 +173,7 @@ public:
 				{
 					numeric_prefix = false;
 				}
-				if (i != from && !VnLangTool::is_alphanumeric(text[i - 1]))
-				{
-					last_delimiter_pos = i - 1;
-				}
-				if (multiterm_trie.is_ending(cur_node) && !VnLangTool::is_alphanumeric(text[i]))
-				{
-					last_delimiter_pos = i;
-				}
+
 				cur_node = multiterm_trie.get_child(cur_node, text[i]);
 			}
 			else
@@ -270,8 +267,7 @@ public:
 					}
 
 					// If there's no previous delimter, go as far as possible then stop
-					if (last_delimiter_pos == -1 &&
-						(i == from || VnLangTool::is_alphanumeric(text[i - 1])))
+					if (last_delimiter_pos == -1)
 					{
 						while (i < length && VnLangTool::is_alphanumeric(text[i]))
 						{
@@ -281,10 +277,6 @@ public:
 					}
 					else
 					{ // There's some previous delimter, possibly the last character
-						if (!VnLangTool::is_alphanumeric(text[i - 1]))
-						{
-							last_delimiter_pos = i - 1;
-						}
 						if (text[last_delimiter_pos] != ' ')
 						{
 							if (multiterm_trie.is_ending(cur_node))
@@ -486,8 +478,8 @@ public:
 						else if (ranges.size() > 1)
 						{
 							T &second_last = ranges[ranges.size() - 2];
-							if (second_last.normalized_end - second_last.normalized_start ==
-									2 &&
+							if (second_last.normalized_start == ranges.back().normalized_end &&
+								second_last.normalized_end - second_last.normalized_start == 2 &&
 								Helper::is_ordinal_suffix(
 									text[second_last.normalized_start],
 									text[second_last.normalized_start + 1]))
