@@ -1,0 +1,22 @@
+# learn more at http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+AccessModifierOffset: -8
+AlignAfterOpenBracket: false
+AlignEscapedNewlinesLeft: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: true
+AlwaysBreakTemplateDeclarations: true
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Allman
+BreakBeforeTernaryOperators: true
+ColumnLimit: 120
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ContinuationIndentWidth: 8
+IndentFunctionDeclarationAfterType: true
+IndentWidth: 8
+SpaceAfterCStyleCast: true
+SpacesInAngles: true
+SpacesInContainerLiterals: true
+SpacesInParentheses: false
+UseTab: Always

@@ -1,0 +1,37 @@
+Bí	Bý
+Hi	Hy *
+Hí	Hý
+Hỉ	Hỷ
+Kì	Kỳ
+Kí	Ký
+Kỉ	Kỷ
+Kĩ	Kỹ
+Kị	Kỵ
+Li	Ly *
+Lì	Lỳ
+Lí	Lý
+Lị	Lỵ
+Nỉ	Nỷ
+Mi	My *
+Mì	Mỳ
+Mĩ	Mỹ
+Mị	Mỵ
+Ti	Ty *
+Tì	Tỳ
+Tí	Tý
+Tỉ	Tỷ
+Tị	Tỵ
+Si	Sy *
+Sỉ	Sỷ
+Sĩ	Sỹ
+Vi	Vy
+Vĩ	Vỹ
+Xi	Xy
+Qui	Quy
+Quì	Quỳ
+Quí	Quý
+Quỉ	Quỷ
+Quĩ	Quỹ
+Quị	Quỵ
+Thi	Thy *
+

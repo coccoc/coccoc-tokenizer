@@ -1,0 +1,17 @@
+coccoc-tokenizer (1.02) stable; urgency=medium
+
+  * added "Conflicts" line
+
+ -- Sergey Bochenkov <bachan@coccoc.com>  Mon, 08 Apr 2019 18:40:21 +0700
+
+coccoc-tokenizer (1.01) stable; urgency=medium
+
+  * changed section
+
+ -- Sergey Bochenkov <bachan@coccoc.com>  Mon, 08 Apr 2019 13:44:51 +0700
+
+coccoc-tokenizer (1.00) stable; urgency=medium
+
+  * initial public release
+
+ -- Sergey Bochenkov <bachan@coccoc.com>  Fri,  4 Apr 2019 17:39:03 +0700

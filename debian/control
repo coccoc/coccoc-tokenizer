@@ -1,0 +1,22 @@
+Source: coccoc-tokenizer
+Section: devel
+Priority: extra
+Maintainer: Le Anh Duc <anhducle@coccoc.com>
+Standards-Version: 3.7.2
+Build-Depends: cmake, debhelper (>= 9)
+Vcs-Git: https://github.com/coccoc/coccoc-tokenizer
+
+Package: coccoc-tokenizer
+Architecture: any
+Depends: ${shlibs:Depends}, libc6 (>= 2.4), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.5.0)
+Conflicts: cpp-tokenizer
+Description: C++ tokenizer implementation
+  A C++ library to tokenize texts
+
+Package: coccoc-tokenizer-java
+Architecture: any
+Depends: ${shlibs:Depends}, coccoc-tokenizer, oracle-java8-jdk
+Conflicts: cpp-tokenizer-java
+Description: Java bindings for C++ tokenizer implementation
+  Java bindings for C++ library to tokenize texts
+
