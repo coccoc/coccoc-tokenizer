@@ -21,7 +21,7 @@ g++ -shared -Wall -Werror -std=c++11 -Wno-deprecated -O3 -DNDEBUG -ggdb -fPIC \
 	-I ${BUILD_DIR}/java \
 	-I ${JAVA_HOME}/include \
 	-I ${JAVA_HOME}/include/linux \
-	-o ${BUILD_DIR}/java/libcoccoc_tokenizer.so \
+	-o ${BUILD_DIR}/libcoccoc_tokenizer_jni.so \
 	${SOURCE_DIR}/src/jni/Tokenizer.cpp
 
 jar -cf ${BUILD_DIR}/coccoc-tokenizer.jar -C ${BUILD_DIR}/java .

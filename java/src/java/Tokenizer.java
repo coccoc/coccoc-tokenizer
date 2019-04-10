@@ -14,7 +14,7 @@ public class Tokenizer {
 	private native int initialize(String dictPath);
 
 	static {
-		System.loadLibrary("coccoc_tokenizer");
+		System.loadLibrary("coccoc_tokenizer_jni");
 	}
 
 	private static final class Loader {

@@ -46,4 +46,5 @@ IF (${BUILD_JAVA})
 		VERBATIM
 	)
 	INSTALL (FILES ${CMAKE_BINARY_DIR}/coccoc-tokenizer.jar DESTINATION share/java)
+	INSTALL (FILES ${CMAKE_BINARY_DIR}/libcoccoc_tokenizer_jni.so DESTINATION lib)
 ENDIF ()

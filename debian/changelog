@@ -1,3 +1,10 @@
+coccoc-tokenizer (1.03) stable; urgency=medium
+
+  * fixed a bug with tokenization of punct
+  * fixed java bindings
+
+ -- Sergey Bochenkov <bachan@coccoc.com>  Wed, 10 Apr 2019 15:20:26 +0700
+
 coccoc-tokenizer (1.02) stable; urgency=medium
 
   * added "Conflicts" line
