@@ -66,20 +66,6 @@ $ tokenizer --help
 $ vn_lang_tool --help
 ```
 
-## Java interface
-
-A java interface is provided to be used in java projects. Internally it utilizes JNI and the Unsafe API to connect Java and C++.
-
-To run the test class from source tree, use the following command:
-
-```
-$ LD_LIBRARY_PATH=build java -cp build/coccoc-tokenizer.jar com.coccoc.Tokenizer "một câu văn tiếng Việt"
-```
-
-Note, that if you have already installed deb package or `make install` everything into your system, `LD_LIBRARY_PATH` is not needed as JNI bindings code will be taken from your system.
-
-Bindings for other languages are not yet implemented but it will be nice if someone can help to write them.
-
 ## Using the library
 
 Use the code of both tools as an example of usage for a library, they are pretty straightforward and easy to understand:
@@ -88,6 +74,21 @@ Use the code of both tools as an example of usage for a library, they are pretty
 tests/test.cpp # for tokenizer tool
 tests/vn_lang_tool_test.cpp # for vn_lang_tool
 ```
+
+## Using Java bindings
+
+A java interface is provided to be used in java projects. Internally it utilizes JNI and the Unsafe API to connect Java and C++. To run the test class from source tree, use the following command:
+
+```
+# LD_LIBRARY_PATH should point to a directory with libcoccoc_tokenizer_jni.so binary
+$ LD_LIBRARY_PATH=build java -cp build/coccoc-tokenizer.jar com.coccoc.Tokenizer "một câu văn tiếng Việt"
+```
+
+Note, that if you have already installed deb package or `make install` everything into your system, `LD_LIBRARY_PATH` is not needed as JNI bindings code will be taken from your system.
+
+## Other languages
+
+Bindings for other languages are not yet implemented but it will be nice if someone can help to write them.
 
 ## Benchmark
 
