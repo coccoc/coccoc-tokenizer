@@ -80,11 +80,10 @@ tests/vn_lang_tool_test.cpp # for vn_lang_tool
 A java interface is provided to be used in java projects. Internally it utilizes JNI and the Unsafe API to connect Java and C++. To run the test class from source tree, use the following command:
 
 ```
-# LD_LIBRARY_PATH should point to a directory with libcoccoc_tokenizer_jni.so binary
 $ LD_LIBRARY_PATH=build java -cp build/coccoc-tokenizer.jar com.coccoc.Tokenizer "một câu văn tiếng Việt"
 ```
 
-Note, that if you have already installed deb package or `make install` everything into your system, `LD_LIBRARY_PATH` is not needed as JNI bindings code will be taken from your system.
+Normally `LD_LIBRARY_PATH` should point to a directory with `libcoccoc_tokenizer_jni.so` binary. If you have already installed deb package or `make install`-ed everything into your system, `LD_LIBRARY_PATH` is not needed as the binary will be taken from your system (`/usr/lib` or similar).
 
 ## Other languages
 
