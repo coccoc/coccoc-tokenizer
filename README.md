@@ -70,11 +70,13 @@ $ vn_lang_tool --help
 
 A java interface is provided to be used in java projects. Internally it utilizes JNI and the Unsafe API to connect Java and C++.
 
-To compile it, uncomment the line "ADD\_SUBDIRECTORY (java_interface)" in CMakeLists.txt before running cmake. After "make", the Tokenizer class will be put in the build directory, which can be used directly, for example:
+To run the test class from source tree, use the following command:
 
 ```
-$ java Tokenizer "một câu văn tiếng việt"
+$ LD_LIBRARY_PATH=build java -cp build/coccoc-tokenizer.jar com.coccoc.Tokenizer "một câu văn tiếng Việt"
 ```
+
+Note, that if you have already installed deb package or `make install` everything into your system, `LD_LIBRARY_PATH` is not needed as JNI bindings code will be taken from your system.
 
 Bindings for other languages are not yet implemented but it will be nice if someone can help to write them.
 
