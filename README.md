@@ -77,7 +77,13 @@ tests/vn_lang_tool_test.cpp # for vn_lang_tool
 
 ## Using Java bindings
 
-A java interface is provided to be used in java projects. Internally it utilizes JNI and the Unsafe API to connect Java and C++. To run the test class from source tree, use the following command:
+A java interface is provided to be used in java projects. Internally it utilizes JNI and the Unsafe API to connect Java and C++. You can find an example of its usage in `Tokenizer` class's main function:
+
+```
+java/src/java/Tokenizer.java
+```
+
+To run this test class from source tree, use the following command:
 
 ```
 $ LD_LIBRARY_PATH=build java -cp build/coccoc-tokenizer.jar com.coccoc.Tokenizer "một câu văn tiếng Việt"
