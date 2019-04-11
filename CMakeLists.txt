@@ -17,11 +17,21 @@ LIST (APPEND DICT_DUMPS ${MULTITERM_DICT_DUMP})
 LIST (APPEND DICT_DUMPS ${SYLLABLE_DICT_DUMP})
 LIST (APPEND DICT_DUMPS ${NONTONE_PAIR_DICT_DUMP})
 
+# We don't use GLOB here because it also takes hidden files and we are too lazy to cope with it
+LIST (APPEND DICT_SOURCES "${CMAKE_SOURCE_DIR}/dicts/tokenizer/acronyms")
+LIST (APPEND DICT_SOURCES "${CMAKE_SOURCE_DIR}/dicts/tokenizer/chemical_comp")
+LIST (APPEND DICT_SOURCES "${CMAKE_SOURCE_DIR}/dicts/tokenizer/Freq2NontoneUniFile")
+LIST (APPEND DICT_SOURCES "${CMAKE_SOURCE_DIR}/dicts/tokenizer/keyword.freq")
+LIST (APPEND DICT_SOURCES "${CMAKE_SOURCE_DIR}/dicts/tokenizer/nontone_pair_freq")
+LIST (APPEND DICT_SOURCES "${CMAKE_SOURCE_DIR}/dicts/tokenizer/special_token.strong")
+LIST (APPEND DICT_SOURCES "${CMAKE_SOURCE_DIR}/dicts/tokenizer/special_token.weak")
+LIST (APPEND DICT_SOURCES "${CMAKE_SOURCE_DIR}/dicts/tokenizer/vndic_multiterm")
+
 ADD_CUSTOM_TARGET (compile_dict ALL DEPENDS ${DICT_DUMPS})
 ADD_CUSTOM_COMMAND (
 	OUTPUT ${DICT_DUMPS}
 	COMMAND ${CMAKE_BINARY_DIR}/dict_compiler "${CMAKE_SOURCE_DIR}/dicts" "${CMAKE_BINARY_DIR}"
-	DEPENDS dict_compiler dicts/
+	DEPENDS dict_compiler "${DICT_SOURCES}"
 	VERBATIM
 )
 
