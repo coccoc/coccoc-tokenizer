@@ -5,9 +5,9 @@ INCLUDE (CMakeMacro.cmake)
 INCLUDE_DIRECTORIES (${PROJECT_BINARY_DIR}/auto)
 INCLUDE_DIRECTORIES (tokenizer)
 
-ADD_EXECUTABLE (tokenizer tests/test.cpp)
-ADD_EXECUTABLE (vn_lang_tool tests/vn_lang_tool_test.cpp)
 ADD_EXECUTABLE (dict_compiler utils/dict_compiler.cpp)
+ADD_EXECUTABLE (tokenizer utils/tokenizer.cpp)
+ADD_EXECUTABLE (vn_lang_tool utils/vn_lang_tool.cpp)
 
 SET (MULTITERM_DICT_DUMP "multiterm_trie.dump")
 SET (SYLLABLE_DICT_DUMP "syllable_trie.dump")
