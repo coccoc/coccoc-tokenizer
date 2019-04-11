@@ -101,15 +101,20 @@ int main(int argc, char **argv)
 	{
 		std::vector< FullToken > res =
 			Tokenizer::instance().segment(text, opts.for_transforming, opts.tokenize_option);
-		for (FullToken &it : res)
+		for (size_t i = 0; i < res.size(); ++i)
 		{
+			if (i != 0)
+			{
+				std::cout << '\t';
+			}
+
 			if (opts.verbose)
 			{
-				std::cout << it.to_string() << '\t';
+				std::cout << res[i].to_string();
 			}
 			else
 			{
-				std::cout << it.text << '\t';
+				std::cout << res[i].text;
 			}
 		}
 		std::cout << std::endl;
