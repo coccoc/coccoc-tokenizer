@@ -12,35 +12,39 @@
 
 typedef spp::sparse_hash_map< int, float > fast_map_t;
 
-namespace Helper {
-	bool is_digit(char c)
-	{
-		return '0' <= c && c <= '9';
-	}
-
-	int find_cut_pos(const std::string &s)
-	{
-		int i = (int) s.size() - 1;
-		while (i >= 0 && !is_digit(s[i]))
-			--i;
-		while (i >= 0 && is_digit(s[i]))
-			--i;
-		return i;
-	}
-
-	int parse_number(const std::string &s, int from)
-	{
-		int num = 0;
-		while (from < (int) s.size() && Helper::is_digit(s[from]))
-		{
-			num = num * 10 + (s[from] - '0');
-			from++;
-		}
-		return num;
-	}
+namespace Helper
+{
+bool is_digit(char c)
+{
+	return '0' <= c && c <= '9';
 }
 
-int load_vndic_multiterm(const std::string &dict_path, bool load_nontone_data, MultitermHashTrie &multiterm_hashtrie, SyllableHashTrie &syllable_hashtrie)
+int find_cut_pos(const std::string &s)
+{
+	int i = (int) s.size() - 1;
+	while (i >= 0 && !is_digit(s[i]))
+		--i;
+	while (i >= 0 && is_digit(s[i]))
+		--i;
+	return i;
+}
+
+int parse_number(const std::string &s, int from)
+{
+	int num = 0;
+	while (from < (int) s.size() && Helper::is_digit(s[from]))
+	{
+		num = num * 10 + (s[from] - '0');
+		from++;
+	}
+	return num;
+}
+}
+
+int load_vndic_multiterm(const std::string &dict_path,
+	bool load_nontone_data,
+	MultitermHashTrie &multiterm_hashtrie,
+	SyllableHashTrie &syllable_hashtrie)
 {
 	std::ifstream f((dict_path + "/vndic_multiterm").c_str());
 	if (!f.is_open())
@@ -62,7 +66,8 @@ int load_vndic_multiterm(const std::string &dict_path, bool load_nontone_data, M
 		{
 			multiterm_hashtrie.add_new_term(root_word, freq, false, false);
 		}
-		if (load_nontone_data) {	
+		if (load_nontone_data)
+		{
 			auto add_syllable = [freq, &syllable_hashtrie](std::string word)
 			{
 				syllable_hashtrie.add_new_term(word, freq);
@@ -105,7 +110,8 @@ int load_common_terms(MultitermHashTrie &multiterm_hashtrie)
 	return 0;
 }
 
-int load_and_dump_nontone_pairs(const std::string &dict_path, const std::string &out_path, SyllableDATrie &syllable_trie)
+int load_and_dump_nontone_pairs(
+	const std::string &dict_path, const std::string &out_path, SyllableDATrie &syllable_trie)
 {
 	// Freq2NontoneUniFile contains all unique nontone syllables
 	// Each is given an index
@@ -123,16 +129,17 @@ int load_and_dump_nontone_pairs(const std::string &dict_path, const std::string 
 		syllable_length.push_back(syllable_trie.update_index(s, syllable_length.size()));
 	}
 	f.close();
-	
+
 	// This file is HUGE, use custom buffered_reader instead of std::istream
 	// nontone_pair_freq contains a description of a sparse 2D-array of frequency
 	// freq[i][j] = frequency of pair "syllable[i]-syllable[j]"
 	// syllable[i] is the syllable whose index is i, retrieved from Freq2NontoneUniFile
 	// nontone_pair_freq is encoded in a way that reduce file size (and potentially improve reading time)
 	// It can be compressed in another form (for example gzip) if we need to reduce file size further
-	
+
 	FILE *out_file = fopen(out_path.c_str(), "wb");
-	if (out_file == nullptr) {
+	if (out_file == nullptr)
+	{
 		std::cerr << "Error: cannot open " << out_path << " for writing" << std::endl;
 		return -1;
 	}
@@ -165,7 +172,8 @@ int load_and_dump_nontone_pairs(const std::string &dict_path, const std::string 
 				0.994141, // 1.pair_len_power
 				0.19,     // 2.pair_power
 			};
-			float pair_score = pair_sticky_params[0] * std::pow(pair_len, pair_sticky_params[1]) * std::pow(pair_freq, pair_sticky_params[2]);
+			float pair_score = pair_sticky_params[0] * std::pow(pair_len, pair_sticky_params[1]) *
+					   std::pow(pair_freq, pair_sticky_params[2]);
 
 			cur_map[second_index] = pair_score;
 		}
@@ -198,7 +206,10 @@ int load_keywords(const std::string &dict_path, MultitermHashTrie &multiterm_has
 	return 0;
 }
 
-int load_acronyms(const std::string &dict_path, bool load_nontone_data, MultitermHashTrie &multiterm_hashtrie, SyllableHashTrie &syllable_hashtrie)
+int load_acronyms(const std::string &dict_path,
+	bool load_nontone_data,
+	MultitermHashTrie &multiterm_hashtrie,
+	SyllableHashTrie &syllable_hashtrie)
 {
 	std::ifstream f((dict_path + "/acronyms").c_str());
 	if (!f.is_open())
@@ -214,7 +225,8 @@ int load_acronyms(const std::string &dict_path, bool load_nontone_data, Multiter
 		int freq;
 		ss >> word >> freq;
 		multiterm_hashtrie.add_new_term(word, freq, false, false);
-		if (load_nontone_data) {
+		if (load_nontone_data)
+		{
 			syllable_hashtrie.add_new_term(word, freq);
 		}
 	}
@@ -272,10 +284,13 @@ int load_and_compile_all_dicts(const std::string &dict_path, const std::string &
 	SyllableHashTrie *syllable_hashtrie = new SyllableHashTrie();
 	int status_code = 0;
 
-	if (0 > (status_code = load_vndic_multiterm(dict_path, load_nontone_data, *multiterm_hashtrie, *syllable_hashtrie))) return status_code;
+	if (0 > (status_code = load_vndic_multiterm(
+			 dict_path, load_nontone_data, *multiterm_hashtrie, *syllable_hashtrie)))
+		return status_code;
 	if (0 > (status_code = load_common_terms(*multiterm_hashtrie))) return status_code;
 	// load_keywords();
-	if (0 > (status_code = load_acronyms(dict_path, load_nontone_data, *multiterm_hashtrie, *syllable_hashtrie))) return status_code;
+	if (0 > (status_code = load_acronyms(dict_path, load_nontone_data, *multiterm_hashtrie, *syllable_hashtrie)))
+		return status_code;
 	if (0 > (status_code = load_chemical_compounds(dict_path, *multiterm_hashtrie))) return status_code;
 	if (0 > (status_code = load_special_terms(dict_path, *multiterm_hashtrie))) return status_code;
 
@@ -289,7 +304,9 @@ int load_and_compile_all_dicts(const std::string &dict_path, const std::string &
 
 	if (load_nontone_data)
 	{
-		if (0 > (status_code = load_and_dump_nontone_pairs(dict_path, out_path +  '/' + NONTONE_PAIR_DICT_DUMP, *syllable_trie))) return status_code;
+		if (0 > (status_code = load_and_dump_nontone_pairs(
+				 dict_path, out_path + '/' + NONTONE_PAIR_DICT_DUMP, *syllable_trie)))
+			return status_code;
 	}
 
 	syllable_trie->dump_to_file(out_path + '/' + SYLLABLE_DICT_DUMP);
@@ -298,8 +315,10 @@ int load_and_compile_all_dicts(const std::string &dict_path, const std::string &
 	return 0;
 }
 
-int main(int argc, char **argv) {
-	if (argc < 3) {
+int main(int argc, char **argv)
+{
+	if (argc < 3)
+	{
 		fprintf(stderr,
 			"Usage:\n"
 			"    %s {INPUT_DICTS_PATH} {OUTPUT_DICTS_PATH}\n"

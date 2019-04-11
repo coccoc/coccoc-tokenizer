@@ -45,8 +45,7 @@ JNIEXPORT jlong JNICALL Java_com_coccoc_Tokenizer_segmentPointer(
 	return (jlong) res_pointer;
 }
 
-JNIEXPORT void JNICALL Java_com_coccoc_Tokenizer_freeMemory(
-	JNIEnv *env, jobject obj, jlong res_pointer)
+JNIEXPORT void JNICALL Java_com_coccoc_Tokenizer_freeMemory(JNIEnv *env, jobject obj, jlong res_pointer)
 {
 	// Cast each object pointer to their respective type, must be careful
 	int64_t *p = (int64_t *) res_pointer;
@@ -56,8 +55,7 @@ JNIEXPORT void JNICALL Java_com_coccoc_Tokenizer_freeMemory(
 	delete[](int64_t *) p;
 }
 
-JNIEXPORT jint JNICALL Java_com_coccoc_Tokenizer_initialize(
-	JNIEnv *env, jobject obj, jstring jni_dict_path)
+JNIEXPORT jint JNICALL Java_com_coccoc_Tokenizer_initialize(JNIEnv *env, jobject obj, jstring jni_dict_path)
 {
 	const char *dict_path = env->GetStringUTFChars(jni_dict_path, nullptr);
 	if (0 > Tokenizer::instance().initialize(std::string(dict_path))) return -1;

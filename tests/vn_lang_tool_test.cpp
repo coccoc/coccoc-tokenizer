@@ -12,14 +12,12 @@ struct transform_option
 	const char *dict_path;
 
 	transform_option()
-	    : keep_case(false),
-	      to_upper(false),
-	      keep_unicode_form(false),
-	      keep_tones(false),
-	      dict_path(DICT_PATH)
-	{}
+	    : keep_case(false), to_upper(false), keep_unicode_form(false), keep_tones(false), dict_path(DICT_PATH)
+	{
+	}
 };
 
+// clang-format off
 static struct option options[] = {
 	{ "help"        , no_argument      , NULL,  0  },
 	{ "keep-case"   , no_argument      , NULL, 'c' },
@@ -29,6 +27,7 @@ static struct option options[] = {
 	{ "dict-path"   , required_argument, NULL, 'd' },
 	{  NULL         , 0                , NULL,  0  }
 };
+// clang-format on
 
 int print_vn_lang_tool_usage(int argc, char **argv)
 {
@@ -54,43 +53,48 @@ int vn_lang_tool_getopt_parse(int argc, char **argv, transform_option &opts)
 	{
 		switch (option_code)
 		{
-			case 'c':
-				opts.keep_case = true;
-				break;
-			case 'U':
-				opts.to_upper = true;
-				break;
-			case 'u':
-				opts.keep_unicode_form = true;
-				break;
-			case 't':
-				opts.keep_tones = true;
-				break;
-			case 'd':
-				opts.dict_path = optarg;
-				break;
-			default:
-				return -1;
+		case 'c':
+			opts.keep_case = true;
+			break;
+		case 'U':
+			opts.to_upper = true;
+			break;
+		case 'u':
+			opts.keep_unicode_form = true;
+			break;
+		case 't':
+			opts.keep_tones = true;
+			break;
+		case 'd':
+			opts.dict_path = optarg;
+			break;
+		default:
+			return -1;
 		}
 	}
 
 	return 0;
 }
 
-std::string do_transform(const std::string &s, const transform_option &opts) {
+std::string do_transform(const std::string &s, const transform_option &opts)
+{
 	if (!VnLangTool::is_valid(s)) return "";
-	
+
 	std::vector< uint32_t > codepoints = VnLangTool::to_UTF(s);
-	if (!opts.keep_case) {
+	if (!opts.keep_case)
+	{
 		codepoints = VnLangTool::lower(codepoints);
 	}
-	if (!opts.keep_unicode_form) {
+	if (!opts.keep_unicode_form)
+	{
 		codepoints = VnLangTool::normalize_NFD_UTF(codepoints);
 	}
-	if (!opts.keep_tones) {
+	if (!opts.keep_tones)
+	{
 		codepoints = VnLangTool::root(codepoints);
 	}
-	if (opts.to_upper) {
+	if (opts.to_upper)
+	{
 		codepoints = VnLangTool::upper(codepoints);
 	}
 	return VnLangTool::vector_to_string(codepoints);
@@ -111,10 +115,13 @@ int main(int argc, char **argv)
 	{
 		std::cout << do_transform(argv[i], opts) << std::endl;
 	}
-	if (optind == argc) {
+	if (optind == argc)
+	{
 		std::string line;
-		std::ios::sync_with_stdio(false); std::cin.tie(nullptr);
-		while (std::getline(std::cin, line)) {
+		std::ios::sync_with_stdio(false);
+		std::cin.tie(nullptr);
+		while (std::getline(std::cin, line))
+		{
 			std::cout << do_transform(line, opts) << '\n';
 		}
 	}

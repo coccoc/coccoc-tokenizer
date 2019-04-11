@@ -478,8 +478,11 @@ public:
 						else if (ranges.size() > 1)
 						{
 							T &second_last = ranges[ranges.size() - 2];
-							if (second_last.normalized_start == ranges.back().normalized_end &&
-								second_last.normalized_end - second_last.normalized_start == 2 &&
+							if (second_last.normalized_start ==
+									ranges.back().normalized_end &&
+								second_last.normalized_end -
+										second_last.normalized_start ==
+									2 &&
 								Helper::is_ordinal_suffix(
 									text[second_last.normalized_start],
 									text[second_last.normalized_start + 1]))
@@ -533,9 +536,14 @@ public:
 						// domain name
 						ranges.back().seg_type = T::URL_SEG_TYPE;
 						int last_space_pos = Helper::find_last_space_pos(text, ranges.back());
-						if (last_space_pos == -1 || for_url) {
-							next_is_domain = ranges.back().normalized_start > 0 && text[ranges.back().normalized_start - 1] == '.';
-						} else {
+						if (last_space_pos == -1 || for_url)
+						{
+							next_is_domain =
+								ranges.back().normalized_start > 0 &&
+								text[ranges.back().normalized_start - 1] == '.';
+						}
+						else
+						{
 							int save_start = ranges.back().normalized_start;
 							ranges.back().normalized_start = last_space_pos + 1;
 							ranges.push_back(T(save_start, last_space_pos));
@@ -942,7 +950,8 @@ public:
 
 		text.swap(new_text);
 		original_pos.swap(new_original_pos);
-		run_tokenize< T >(text.data(), text.size(), ranges, space_positions, for_transforming, true, true, true);
+		run_tokenize< T >(
+			text.data(), text.size(), ranges, space_positions, for_transforming, true, true, true);
 	}
 
 	template < class T >

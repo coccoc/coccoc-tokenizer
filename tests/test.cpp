@@ -21,9 +21,11 @@ struct tokenizer_option
 	      tokenize_option(Tokenizer::TOKENIZE_NORMAL),
 	      verbose(false),
 	      dict_path(DICT_PATH)
-	{}
+	{
+	}
 };
 
+// clang-format off
 static struct option options[] = {
 	{ "help"         , no_argument      , NULL,  0  },
 	{ "for-transform", no_argument      , NULL, 't' },
@@ -34,6 +36,7 @@ static struct option options[] = {
 	{ "dict-path"    , required_argument, NULL, 'd' },
 	{  NULL          , 0                , NULL,  0  }
 };
+// clang-format on
 
 int print_tokenizer_usage(int argc, char **argv)
 {
@@ -60,26 +63,26 @@ int tokenizer_getopt_parse(int argc, char **argv, tokenizer_option &opts)
 	{
 		switch (option_code)
 		{
-			case 't':
-				opts.for_transforming = true;
-				break;
-			case 'n':
-				opts.no_sticky = true;
-				break;
-			case 'u':
-				opts.tokenize_option = Tokenizer::TOKENIZE_URL;
-				break;
-			case 'h':
-				opts.tokenize_option = Tokenizer::TOKENIZE_HOST;
-				break;
-			case 'v':
-				opts.verbose = true;
-				break;
-			case 'd':
-				opts.dict_path = optarg;
-				break;
-			default:
-				return -1;
+		case 't':
+			opts.for_transforming = true;
+			break;
+		case 'n':
+			opts.no_sticky = true;
+			break;
+		case 'u':
+			opts.tokenize_option = Tokenizer::TOKENIZE_URL;
+			break;
+		case 'h':
+			opts.tokenize_option = Tokenizer::TOKENIZE_HOST;
+			break;
+		case 'v':
+			opts.verbose = true;
+			break;
+		case 'd':
+			opts.dict_path = optarg;
+			break;
+		default:
+			return -1;
 		}
 	}
 
@@ -97,7 +100,8 @@ int main(int argc, char **argv)
 
 	if (0 > Tokenizer::instance().initialize(opts.dict_path, !opts.no_sticky)) exit(EXIT_FAILURE);
 
-	auto process = [&opts] (const std::string &text) {
+	auto process = [&opts](const std::string &text)
+	{
 		std::vector< FullToken > res =
 			Tokenizer::instance().segment(text, opts.for_transforming, opts.tokenize_option);
 		for (FullToken &it : res)
@@ -122,9 +126,11 @@ int main(int argc, char **argv)
 		process(argv[i]);
 	}
 
-	if (optind == argc) {
+	if (optind == argc)
+	{
 		std::string line;
-		while (std::getline(std::cin, line)) {
+		while (std::getline(std::cin, line))
+		{
 			process(line);
 		}
 	}

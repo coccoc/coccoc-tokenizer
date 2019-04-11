@@ -66,8 +66,10 @@ inline bool is_small_number_or_az_char(const uint32_t *text, const Token &token)
 	       (token.normalized_end - token.normalized_start == 1 && az_only(text[token.normalized_start]));
 }
 
-inline int find_last_space_pos(const uint32_t *text, const Token &token) {
-	for (int i = token.normalized_end - 1; i >= token.normalized_start; --i) {
+inline int find_last_space_pos(const uint32_t *text, const Token &token)
+{
+	for (int i = token.normalized_end - 1; i >= token.normalized_start; --i)
+	{
 		if (text[i] == ' ') return i;
 	}
 	return -1;
