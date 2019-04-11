@@ -45,11 +45,11 @@ int print_tokenizer_usage(int argc, char **argv)
 		"    %s [TEXT]...\n"
 		"\n"
 		"Options:\n"
-		"    -t, --for-transform    : segment for transforming, ommiting punctuations\n"
+		"    -t, --for-transform    : segment for transforming\n"
 		"    -n, --no-sticky        : do not split sticky text\n"
 		"    -u, --url              : segment URL\n"
 		"    -h, --host             : segment HOST\n"
-		"    -v, --verbose          : print token details and puncts\n"
+		"    -v, --verbose          : print token details\n"
 		"    -d, --dict-path <path> : dictionaries'path, default \"/usr/share/tokenizer/dicts/\"\n\n",
 		argv[0]);
 
@@ -112,10 +112,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				if (it.type != Token::PUNCT && it.type != Token::SPACE)
-				{
-					std::cout << it.text << '\t';
-				}
+				std::cout << it.text << '\t';
 			}
 		}
 		std::cout << std::endl;
