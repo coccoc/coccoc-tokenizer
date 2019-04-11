@@ -104,3 +104,4 @@ The benchmark is done on a typical laptop with Intel Core i5-5200U processor:
 - Output: **106.042.935** tokens out of **630.252.179** characters
 - Processing time: **41** seconds
 - Speed: **15M** characters / second, or **2.5M** tokens / second
+- RAM consumption is around 300Mb
