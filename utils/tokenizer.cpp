@@ -3,10 +3,6 @@
 #include <tokenizer/tokenizer.hpp>
 #include <tokenizer/config.h>
 
-#ifndef DICT_PATH
-#define DICT_PATH ""
-#endif
-
 struct tokenizer_option
 {
 	bool for_transforming;
@@ -50,7 +46,8 @@ int print_tokenizer_usage(int argc, char **argv)
 		"    -u, --url              : segment URL\n"
 		"    -h, --host             : segment HOST\n"
 		"    -v, --verbose          : print token details\n"
-		"    -d, --dict-path <path> : dictionaries'path, default \"/usr/share/tokenizer/dicts/\"\n\n",
+		"    -d, --dict-path <path> : dictionaries path, default is " DICT_PATH "\n"
+		"        --help             : show this message\n\n",
 		argv[0]);
 
 	return 0;

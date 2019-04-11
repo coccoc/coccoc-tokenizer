@@ -2,6 +2,7 @@
 #include <vector>
 #include <getopt.h>
 #include <tokenizer/auxiliary/vn_lang_tool.hpp>
+#include <tokenizer/config.h>
 
 struct transform_option
 {
@@ -40,7 +41,8 @@ int print_vn_lang_tool_usage(int argc, char **argv)
 		"    -U, --upper-case       : convert to upper-case\n"
 		"    -u, --keep-unicode     : keep original unicode form (default convert to canonical form)\n"
 		"    -t, --keep-tones       : keep tones (default remove all tones/hat)\n"
-		"    -d, --dict-path <path> : dictionaries'path, default \"/usr/share/tokenizer/dicts/\"\n\n",
+		"    -d, --dict-path <path> : dictionaries path, default is " DICT_PATH "\n"
+		"        --help             : show this message\n\n",
 		argv[0]);
 
 	return 0;
