@@ -6,7 +6,7 @@ This project provides tokenizer library for Vietnamese language and 2 command li
 
 Building from source and installing into sandbox (or into the system):
 
-```bash
+```
 $ mkdir build && cd build
 $ cmake ..
 # make install
