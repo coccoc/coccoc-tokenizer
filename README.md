@@ -6,7 +6,7 @@ This project provides tokenizer library for Vietnamese language and 2 command li
 
 Building from source and installing into sandbox (or into the system):
 
-```
+```bash
 $ mkdir build && cd build
 $ cmake ..
 # make install
@@ -78,22 +78,22 @@ utils/vn_lang_tool.cpp # for vn_lang_tool
 Here's a short code snippet from there:
 
 ```cpp
-	// initialize tokenizer, exit in case of failure
-	if (0 > Tokenizer::instance().initialize(opts.dict_path, !opts.no_sticky))
-	{
-		exit(EXIT_FAILURE);
-	}
+// initialize tokenizer, exit in case of failure
+if (0 > Tokenizer::instance().initialize(opts.dict_path, !opts.no_sticky))
+{
+	exit(EXIT_FAILURE);
+}
 
-	// tokenize given text, two additional options are:
-	//   - bool for_transforming - this option is Cốc Cốc specific kept for backwards compatibility
-	//   - int tokenize_options - TOKENIZE_NORMAL, TOKENIZE_HOST or TOKENIZE_URL,
-	//     just use Tokenizer::TOKENIZE_NORMAL if unsure
-	std::vector< FullToken > res = Tokenizer::instance().segment(text, false, opts.tokenize_option);
+// tokenize given text, two additional options are:
+//   - bool for_transforming - this option is Cốc Cốc specific kept for backwards compatibility
+//   - int tokenize_options - TOKENIZE_NORMAL, TOKENIZE_HOST or TOKENIZE_URL,
+//     just use Tokenizer::TOKENIZE_NORMAL if unsure
+std::vector< FullToken > res = Tokenizer::instance().segment(text, false, opts.tokenize_option);
 
-	for (FullToken t : res)
-	{
-		// do something with tokens
-	}
+for (FullToken t : res)
+{
+	// do something with tokens
+}
 ```
 
 Note that you can call `segment()` function of the same Tokenizer instance multiple times and in parallel from multiple threads.
