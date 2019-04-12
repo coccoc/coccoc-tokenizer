@@ -156,14 +156,12 @@ The benchmark is done on a typical laptop with Intel Core i5-5200U processor:
 
 ## Quality Comparison
 
-The `tokenizer` tool has a special output format which is similar to other existing tools for tokenization of Vietnamese texts. Compare:
+The `tokenizer` tool has a special output format which is similar to other existing tools for tokenization of Vietnamese texts - it preserves all the original text and just marks multi-syllable tokens with underscores instead of spaces. Compare:
 
 ```
-# Normal output
 $ tokenizer 'Lan hỏi: "điều kiện gì?".'
 lan     hỏi     điều kiện       gì
 
-# Output in 'original' format, note that punct is kept and spaces inside tokens are changed into underscores
 $ tokenizer -f original 'Lan hỏi: "điều kiện gì?".'
 Lan hỏi: "điều_kiện gì?".
 ```
