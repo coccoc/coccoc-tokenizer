@@ -1,6 +1,6 @@
 # C++ tokenizer for Vietnamese
 
-This project provides tokenizer library for Vietnamese language and 2 command line tools for tokenization and some simple Vietnamese-specific operations with text (i.e. remove diacritics).
+This project provides tokenizer library for Vietnamese language and 2 command line tools for tokenization and some simple Vietnamese-specific operations with text (i.e. remove diacritics). It is used in Cốc Cốc Search and Ads systems and the main goal in its development was to reach high performance while keeping the quality reasonable for search ranking needs.
 
 ### Installing
 
@@ -153,3 +153,44 @@ The benchmark is done on a typical laptop with Intel Core i5-5200U processor:
 - Processing time: **41** seconds
 - Speed: **15M** characters / second, or **2.5M** tokens / second
 - RAM consumption is around **300Mb**
+
+## Quality Comparison
+
+The `tokenizer` tool has a special output format which is similar to other existing tools for tokenization of Vietnamese texts. Compare:
+
+```
+# Normal output
+$ tokenizer 'Lan hỏi: "điều kiện gì?".'
+lan     hỏi     điều kiện       gì
+
+# Output in 'original' format, note that punct is kept and spaces inside tokens are changed into underscores
+$ tokenizer -f original 'Lan hỏi: "điều kiện gì?".'
+Lan hỏi: "điều_kiện gì?".
+```
+
+Using the ([following testset](https://github.com/UniversalDependencies/UD_Vietnamese-VTB)) for comparison with ([underthesea](https://github.com/undertheseanlp/underthesea)) and ([RDRsegmenter](https://github.com/datquocnguyen/RDRsegmenter)), we get significantly lower result, but for most of the cases the observed differences are not important for search ranking quality. Below you can find few examples of such differences. Please, be aware of them when using this library.
+
+```
+original         : Em út theo anh cả vào miền Nam.
+coccoc-tokenizer : Em_út theo anh_cả vào miền_Nam.
+underthesea      : Em_út theo anh cả vào miền Nam.
+RDRsegmenter     : Em_út theo anh_cả vào miền Nam.
+
+original         : kết quả cuộc thi phóng sự - ký sự 2004 của báo Tuổi Trẻ.
+coccoc-tokenizer : kết_quả cuộc_thi phóng_sự - ký_sự 2004 của báo Tuổi_Trẻ.
+underthesea      : kết_quả cuộc thi phóng_sự - ký_sự 2004 của báo Tuổi_Trẻ.
+RDRsegmenter     : kết_quả cuộc thi phóng_sự - ký_sự 2004 của báo Tuổi_Trẻ.
+
+original         : cô bé lớn lên dưới mái lều tranh rách nát, trong một gia đình có bốn thế hệ phải xách bị gậy đi ăn xin.
+coccoc-tokenizer : cô_bé lớn lên dưới mái lều tranh rách_nát, trong một gia_đình có bốn thế_hệ phải xách bị gậy đi ăn_xin.
+underthesea      : cô bé lớn lên dưới mái lều tranh rách_nát, trong một gia_đình có bốn thế_hệ phải xách bị_gậy đi ăn_xin.
+RDRsegmenter     : cô bé lớn lên dưới mái lều tranh rách_nát, trong một gia_đình có bốn thế_hệ phải xách bị_gậy đi ăn_xin.
+```
+
+We also don't apply any named entity recognition mechanisms within the tokenizer and have few rare cases where we fail to solve ambiguity correctly. We thus didn't want to provide exact quality comparison results as probably the goals and potential use cases of this library and of those similar ones mentioned above are different and thus precise comparion doesn't make much sense.
+
+## Future Plans
+
+We'd love to introduce bindings for Python and maybe other languages later and we'd be happy if somebody can help us doing that. We are also thinking about adding POS tagger and more complex linguistic features later.
+
+If you find any issues or have any suggestions regarding further upgrades, please, report them here or write us through github.
