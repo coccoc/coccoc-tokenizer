@@ -166,7 +166,7 @@ $ tokenizer -f original 'Lan hỏi: "điều kiện gì?".'
 Lan hỏi: "điều_kiện gì?".
 ```
 
-Using the ([following testset](https://github.com/UniversalDependencies/UD_Vietnamese-VTB)) for comparison with ([underthesea](https://github.com/undertheseanlp/underthesea)) and ([RDRsegmenter](https://github.com/datquocnguyen/RDRsegmenter)), we get significantly lower result, but for most of the cases the observed differences are not important for search ranking quality. Below you can find few examples of such differences. Please, be aware of them when using this library.
+Using the [following testset](https://github.com/UniversalDependencies/UD_Vietnamese-VTB) for comparison with [underthesea](https://github.com/undertheseanlp/underthesea) and [RDRsegmenter](https://github.com/datquocnguyen/RDRsegmenter), we get significantly lower result, but for most of the cases the observed differences are not important for search ranking quality. Below you can find few examples of such differences. Please, be aware of them when using this library.
 
 ```
 original         : Em út theo anh cả vào miền Nam.
