@@ -8,16 +8,16 @@ Building from source and installing into sandbox (or into the system):
 
 ```
 $ mkdir build && cd build
-$ cmake -DCMAKE_INSTALL_PREFIX=/path/to/your/prefix ..
-$ make install
+$ cmake ..
+# make install
 ```
 
 To include java bindings:
 
 ```
 $ mkdir build && cd build
-$ cmake -DBUILD_JAVA=1 -DCMAKE_INSTALL_PREFIX=/path/to/your/prefix ..
-$ make install
+$ cmake -DBUILD_JAVA=1 ..
+# make install
 ```
 
 Building debian package can be done with debhelper tools:
@@ -71,8 +71,56 @@ $ vn_lang_tool --help
 Use the code of both tools as an example of usage for a library, they are pretty straightforward and easy to understand:
 
 ```
-tests/test.cpp # for tokenizer tool
-tests/vn_lang_tool_test.cpp # for vn_lang_tool
+utils/tokenizer.cpp # for tokenizer tool
+utils/vn_lang_tool.cpp # for vn_lang_tool
+```
+
+Here's a short code snippet from there:
+
+```cpp
+	// initialize tokenizer, exit in case of failure
+	if (0 > Tokenizer::instance().initialize(opts.dict_path, !opts.no_sticky))
+	{
+		exit(EXIT_FAILURE);
+	}
+
+	// tokenize given text, two additional options are:
+	//   - bool for_transforming - this option is Cốc Cốc specific kept for backwards compatibility
+	//   - int tokenize_options - TOKENIZE_NORMAL, TOKENIZE_HOST or TOKENIZE_URL,
+	//     just use Tokenizer::TOKENIZE_NORMAL if unsure
+	std::vector< FullToken > res = Tokenizer::instance().segment(text, false, opts.tokenize_option);
+
+	for (FullToken t : res)
+	{
+		// do something with tokens
+	}
+```
+
+Note that you can call `segment()` function of the same Tokenizer instance multiple times and in parallel from multiple threads.
+
+Here's a short explanation of fields in FullToken structure:
+
+```cpp
+struct Token {
+	// position of the start of normalized token (in chars)
+	int32_t normalized_start;
+	// position of the end of normalized token (in chars)
+	int32_t normalized_end;
+	// position of the start of token in original text (in bytes)
+	int32_t original_start;
+	// position of the end of token in original text (in bytes)
+	int32_t original_end;
+	// token type (WORD, NUMBER, SPACE or PUNCT)
+	int32_t type;
+	// token segmentation type (this field is Cốc Cốc specific and kept for backwards compatibility)
+	int32_t seg_type;
+}
+
+struct FullToken : Token {
+	// normalized token text
+	std::string text;
+}
+
 ```
 
 ## Using Java bindings
