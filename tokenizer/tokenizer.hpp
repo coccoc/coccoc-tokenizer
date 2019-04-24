@@ -79,7 +79,10 @@ private:
 			return -1;
 		}
 		int n = 0;
-		fread(&n, sizeof(n), 1, in);
+		if (fread(&n, sizeof(n), 1, in) != 1) {
+			fclose(in);
+			return -1;
+		}
 		nontone_pair_freq_map.resize(n);
 		FileSerializer serializer;
 		for (int i = 0; i < n; ++i)

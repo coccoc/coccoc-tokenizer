@@ -234,23 +234,28 @@ struct DATrie
 			return -1;
 		}
 
-		fread(&alphabet_size, sizeof(alphabet_size), 1, in_file);
+#define RETURN_ERROR \
+	{\
+		fclose(in_file);\
+		std::cerr << "Cannot read full trie information!" << std::endl;\
+		return -1;\
+	}
+
+		if (fread(&alphabet_size, sizeof(alphabet_size), 1, in_file) != 1) RETURN_ERROR
 		std::vector< uint32_t > char_set(alphabet_size);
-		fread(char_set.data(), sizeof(uint32_t), alphabet_size, in_file);
+
+		if (fread(char_set.data(), sizeof(uint32_t), alphabet_size, in_file) != (size_t) alphabet_size) RETURN_ERROR
 		build_char_map(std::set< uint32_t >(char_set.begin(), char_set.end()));
 
 		size_t pool_size = 0;
-		fread(&pool_size, sizeof(pool_size), 1, in_file);
+		if (fread(&pool_size, sizeof(pool_size), 1, in_file) != 1) RETURN_ERROR
 		pool.resize(pool_size);
-		size_t num_read = fread(pool.data(), sizeof(Node), pool_size, in_file);
-		if (num_read != pool_size)
-		{
-			std::cerr << "Cannot read full trie information!" << std::endl;
-			return -1;
-		}
+		if (fread(pool.data(), sizeof(Node), pool_size, in_file) != pool_size) RETURN_ERROR
 
 		fclose(in_file);
 		return 0;
+
+#undef RETURN_ERROR
 	}
 };
 
