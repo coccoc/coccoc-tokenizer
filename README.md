@@ -185,7 +185,7 @@ underthesea      : cô bé lớn lên dưới mái lều tranh rách_nát, trong
 RDRsegmenter     : cô bé lớn lên dưới mái lều tranh rách_nát, trong một gia_đình có bốn thế_hệ phải xách bị_gậy đi ăn_xin.
 ```
 
-We also don't apply any named entity recognition mechanisms within the tokenizer and have few rare cases where we fail to solve ambiguity correctly. We thus didn't want to provide exact quality comparison results as probably the goals and potential use cases of this library and of those similar ones mentioned above are different and thus precise comparion doesn't make much sense.
+We also don't apply any named entity recognition mechanisms within the tokenizer and have few rare cases where we fail to solve ambiguity correctly. We thus didn't want to provide exact quality comparison results as probably the goals and potential use cases of this library and of those similar ones mentioned above are different and thus precise comparison doesn't make much sense.
 
 ## Future Plans
 
