@@ -1,5 +1,4 @@
 #include <vector>
-#include <algorithm>
 #include <getopt.h>
 #include <tokenizer/tokenizer.hpp>
 #include <tokenizer/config.h>
@@ -130,11 +129,7 @@ int main(int argc, char **argv)
 
 			for (/* void */; i < res.size(); ++i)
 			{
-				if (i > 0 && res[i - 1].original_end == res[i].original_start)
-				{
-					std::cout << ' '; // avoid having tokens sticked together
-				}
-				size_t punct_start = (i > 0) ? res[i - 1].original_end : 0;
+				size_t punct_start = (i > 0) ? res[i-1].original_end : 0;
 				size_t punct_len = res[i].original_start - punct_start;
 
 				if (punct_len > 0)
@@ -142,8 +137,15 @@ int main(int argc, char **argv)
 					std::cout << text.substr(punct_start, punct_len);
 				}
 
-				std::replace(res[i].text.begin(), res[i].text.end(), ' ', '_');
-				std::cout << res[i].text;
+				size_t token_start = res[i].original_start;
+				size_t token_len = res[i].original_end - token_start;
+
+				std::string token(text, token_start, token_len);
+				for (size_t j = 0; j < token_len; ++j)
+				{
+					if (token[j] == ' ') token[j] = '_';
+				}
+				std::cout << token;
 			}
 
 			size_t punct_start = (i > 0) ? res[i-1].original_end : 0;
