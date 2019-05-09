@@ -399,8 +399,7 @@ public:
 		std::vector< int > &space_positions,
 		bool for_transforming = false,
 		bool tokenize_sticky = true,
-		bool dont_push_puncts = false,
-		bool for_url = false)
+		bool dont_push_puncts = false)
 	{
 
 		std::vector< double > best_scores(length + 1, 0);
@@ -539,7 +538,7 @@ public:
 						// domain name
 						ranges.back().seg_type = T::URL_SEG_TYPE;
 						int last_space_pos = Helper::find_last_space_pos(text, ranges.back());
-						if (last_space_pos == -1 || for_url)
+						if (last_space_pos == -1)
 						{
 							next_is_domain =
 								ranges.back().normalized_start > 0 &&
@@ -906,20 +905,20 @@ public:
 			int from, int to)
 		{
 			int sublength = to - from;
+			size_t it = space_positions.size();
 			tokenize_pure_sticky_to_syllables(text.data() + from, sublength, space_positions);
-			for (int pos = 0, it = 0; pos < sublength; ++pos)
+			for (int pos = 0; pos < sublength; ++pos)
 			{
-				if (it < (int) space_positions.size() && pos == space_positions[it])
+				if (it < space_positions.size() && pos == space_positions[it])
 				{
+					space_positions[it] = new_text.size();
 					new_text.push_back(' ');
-					new_original_pos.push_back(
-						new_original_pos.empty() ? 0 : new_original_pos.back() + 1);
+					new_original_pos.push_back(original_pos[from + pos]);
 					it++;
 				}
 				new_text.push_back(text[from + pos]);
 				new_original_pos.push_back(original_pos[from + pos]);
 			}
-			space_positions.clear();
 		};
 
 		int last_non_alphanumeric = start_index - 1;
@@ -934,14 +933,12 @@ public:
 				if (text[i] != '.' && text[i] != '/')
 				{
 					new_text.push_back(' ');
-					new_original_pos.push_back(
-						new_original_pos.empty() ? 0 : new_original_pos.back() + 1);
 				}
 				else
 				{
 					new_text.push_back(text[i]);
-					new_original_pos.push_back(original_pos[i]);
 				}
+				new_original_pos.push_back(original_pos[i]);
 				last_non_alphanumeric = i;
 			}
 		}
@@ -954,7 +951,7 @@ public:
 		text.swap(new_text);
 		original_pos.swap(new_original_pos);
 		run_tokenize< T >(
-			text.data(), text.size(), ranges, space_positions, for_transforming, true, true, true);
+			text.data(), text.size(), ranges, space_positions, for_transforming, false, true);
 	}
 
 	template < class T >
@@ -1038,12 +1035,14 @@ public:
 		handle_tokenization_request< FullToken >(
 			text, res, space_positions, original_pos, for_transforming, tokenize_option);
 
+		if (tokenize_option == TOKENIZE_URL) space_positions.clear(); // space_positions is not necessary for normalized text
+
 		space_positions.push_back(-1);
 		for (int i = 0, it = 0; i < (int) res.size(); ++i)
 		{
 			res[i].original_start += original_pos[res[i].normalized_start];
 			res[i].original_end += original_pos[res[i].normalized_end];
-			res[i].text.reserve(res[i].normalized_end - res[i].normalized_start + 1);
+			res[i].text.reserve(res[i].original_end - res[i].original_start + 1);
 			for (int pos = res[i].normalized_start; pos < res[i].normalized_end; ++pos)
 			{
 				if (space_positions[it] == pos)
@@ -1052,6 +1051,43 @@ public:
 					it++;
 				}
 				utf8::append(text[pos], std::back_inserter(res[i].text));
+			}
+		}
+
+		return res;
+	}
+
+	std::vector< FullToken > segment_original(
+		const std::string &original_text, int tokenize_option = TOKENIZE_NORMAL)
+	{
+		std::vector< uint32_t > text;
+		std::vector< int > original_pos;
+		normalize_for_tokenization(original_text, text, original_pos);
+
+		std::vector< FullToken > res;
+		std::vector< int > space_positions;
+
+		handle_tokenization_request< FullToken >(
+			text, res, space_positions, original_pos, false, tokenize_option);
+
+		for (int &pos : space_positions) pos = original_pos[pos];
+		space_positions.push_back(-1);
+
+		for (int i = 0, it = 0; i < (int) res.size(); ++i)
+		{
+			res[i].original_start += original_pos[res[i].normalized_start];
+			res[i].original_end += original_pos[res[i].normalized_end];
+			res[i].text.reserve(res[i].original_end - res[i].original_start + 1);
+			for (int pos = res[i].original_start; pos < res[i].original_end; ++pos)
+			{
+				if (space_positions[it] == pos)
+				{
+					if (pos > res[i].original_start) {
+						res[i].text += '_';
+					}
+					it++;
+				}
+				res[i].text += original_text[pos];
 			}
 		}
 
