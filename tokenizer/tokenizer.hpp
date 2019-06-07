@@ -1087,7 +1087,7 @@ public:
 					}
 					it++;
 				}
-				res[i].text += original_text[pos];
+				res[i].text += original_text[pos] == ' ' ? '_' : original_text[pos];
 			}
 		}
 
