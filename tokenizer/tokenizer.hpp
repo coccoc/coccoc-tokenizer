@@ -1136,6 +1136,48 @@ public:
 		}
 		return res;
 	}
+
+	// reimplement of segment_original for general purpose (python wrapping)
+	std::vector< FullToken > segment_general(const std::string &original_text, int tokenize_option = TOKENIZE_NORMAL) {
+		std::vector< uint32_t > text;
+		std::vector< int > original_pos;
+		normalize_for_tokenization(original_text, text, original_pos);
+
+		std::vector< FullToken > res;
+		std::vector< int > space_positions;
+
+		// using for_transforming to keep punctuations
+		handle_tokenization_request< FullToken >(
+			text, res, space_positions, original_pos, /*for_transforming*/ true, tokenize_option);
+
+		for (int &pos : space_positions) pos = original_pos[pos];
+		space_positions.push_back(-1);
+
+		for (int i = 0, it = 0; i < (int) res.size(); ++i)
+		{
+			res[i].original_start += original_pos[res[i].normalized_start];
+			res[i].original_end += original_pos[res[i].normalized_end];
+			res[i].text.reserve(res[i].original_end - res[i].original_start + 1);
+			for (int pos = res[i].original_start; pos < res[i].original_end; ++pos)
+			{
+				if (space_positions[it] == pos)
+				{
+					if (pos > res[i].original_start) {
+						res[i].text += '_';
+					}
+					it++;
+				}
+				res[i].text += original_text[pos] == ' ' ? '_' : original_text[pos];
+			}
+		}
+		
+		// drop empty (space/underscore) tokens
+		res.erase(std::remove_if(res.begin(), res.end(), 
+								 [&](const FullToken &token) {return (token.text == "_");}),
+				  res.end());
+
+		return res;
+	}
 };
 
 #endif // TOKENIZER_HPP
