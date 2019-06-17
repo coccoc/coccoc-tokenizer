@@ -26,6 +26,17 @@ Building debian package can be done with debhelper tools:
 $ dpkg-buildpackage <options> # from source tree root
 ```
 
+To include python bindings (after install for C++):
+
+Install [cython](https://pypi.org/project/Cython/) package
+
+Compile wrapper code
+
+```
+$ cd python
+$ python setup.py install
+```
+
 ## Using the tools
 
 Both tools will show their usage with `--help` option. Both tools can accept either command line arguments or stdin as an input (if both provided, command line arguments are preferred). If stdin is used, each line is considered as one separate argument. The output format is TAB-separated tokens of the original phrase (note that Vietnamese tokens can have whitespaces inside). There's a few examples of usage below.
@@ -138,6 +149,23 @@ $ LD_LIBRARY_PATH=build java -cp build/coccoc-tokenizer.jar com.coccoc.Tokenizer
 ```
 
 Normally `LD_LIBRARY_PATH` should point to a directory with `libcoccoc_tokenizer_jni.so` binary. If you have already installed deb package or `make install`-ed everything into your system, `LD_LIBRARY_PATH` is not needed as the binary will be taken from your system (`/usr/lib` or similar).
+
+## Using Python bindings
+
+```python
+from CocCocTokenizer import PyTokenizer
+
+# load_nontone_data is True by default
+T = PyTokenizer(load_nontone_data=True)
+
+# tokenize_option:
+# 	0: TOKENIZE_NORMAL (default)
+#	1: TOKENIZE_HOST
+#	2: TOKENIZE_URL
+print(T.word_tokenize("xin chào, tôi là người Việt Nam", tokenize_option=0))
+
+# output: ['xin', 'chào', ',', 'tôi', 'là', 'người', 'Việt_Nam']
+```
 
 ## Other languages
 

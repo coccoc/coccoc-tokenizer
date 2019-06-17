@@ -1,2 +1,5 @@
 build
 install
+python/*.c
+python/*.cpp
+python/*.html
