@@ -20,7 +20,7 @@ export DH_OPTIONS
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- -DBUILD_JAVA=1
+	dh_auto_configure -- -DBUILD_JAVA=1 -DBUILD_PYTHON=1
 
 override_dh_strip:
 
