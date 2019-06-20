@@ -20,21 +20,18 @@ $ cmake -DBUILD_JAVA=1 ..
 # make install
 ```
 
+To include python bindings - install [cython](https://pypi.org/project/Cython/) package and compile wrapper code (only Python3 is supported):
+
+```
+$ mkdir build && cd build
+$ cmake -DBUILD_PYTHON=1 ..
+# make install
+```
+
 Building debian package can be done with debhelper tools:
 
 ```
 $ dpkg-buildpackage <options> # from source tree root
-```
-
-To include python bindings (after install for C++):
-
-Install [cython](https://pypi.org/project/Cython/) package
-
-Compile wrapper code
-
-```
-$ cd python
-$ python setup.py install
 ```
 
 ## Using the tools

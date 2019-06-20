@@ -58,3 +58,13 @@ IF (${BUILD_JAVA})
 	INSTALL (FILES ${CMAKE_BINARY_DIR}/coccoc-tokenizer.jar DESTINATION share/java)
 	INSTALL (FILES ${CMAKE_BINARY_DIR}/libcoccoc_tokenizer_jni.so DESTINATION lib)
 ENDIF ()
+
+IF (${BUILD_PYTHON})
+	ADD_CUSTOM_TARGET (compile_python ALL DEPENDS ${CMAKE_BINARY_DIR}/python/lib)
+	ADD_CUSTOM_COMMAND (
+		OUTPUT ${CMAKE_BINARY_DIR}/python/lib
+		COMMAND ${CMAKE_SOURCE_DIR}/python/build_python.sh ${CMAKE_BINARY_DIR} install --prefix=${CMAKE_BINARY_DIR}/python
+		VERBATIM
+	)
+	INSTALL (DIRECTORY ${CMAKE_BINARY_DIR}/python/lib/ DESTINATION lib)
+ENDIF ()

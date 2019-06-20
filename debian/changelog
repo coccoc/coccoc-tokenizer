@@ -1,3 +1,9 @@
+coccoc-tokenizer (1.4) stable; urgency=medium
+
+  * version bump
+
+ -- Sergey Bochenkov <bachan@coccoc.com>  Thu, 20 Jun 2019 21:20:26 +0700
+
 coccoc-tokenizer (1.03) stable; urgency=medium
 
   * fixed a bug with tokenization of punct

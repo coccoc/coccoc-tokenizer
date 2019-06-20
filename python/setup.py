@@ -10,10 +10,18 @@ ext_modules = [
         extra_compile_args=["-Wno-cpp", "-Wno-unused-function", "-O2", "-march=native"],
         extra_link_args=["-O2", "-march=native"],
         language="c++",
-        include_dirs=["."],
     )
 ]
 
 setup(
-    name="coccoc-tokenizer", ext_modules=ext_modules, cmdclass={"build_ext": build_ext}
+    name = "CocCocTokenizer",
+    version = "1.4",
+    description = "high performance tokenizer for Vietnamese language",
+    long_description = "high performance tokenizer for Vietnamese language",
+    author = "Le Anh Duc",
+    author_email = "anhducle@coccoc.com",
+    url = "https://github.com/coccoc/coccoc-tokenizer",
+    license = "GNU Lesser General Public License v3",
+    ext_modules = ext_modules,
+    cmdclass = { "build_ext": build_ext }
 )
