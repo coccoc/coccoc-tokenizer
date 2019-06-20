@@ -60,6 +60,7 @@ IF (${BUILD_JAVA})
 ENDIF ()
 
 IF (${BUILD_PYTHON})
+	# XXX Some build files in this target are generated inside source tree, should fix later
 	ADD_CUSTOM_TARGET (compile_python ALL DEPENDS ${CMAKE_BINARY_DIR}/python/lib)
 	ADD_CUSTOM_COMMAND (
 		OUTPUT ${CMAKE_BINARY_DIR}/python/lib
