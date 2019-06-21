@@ -13,6 +13,8 @@ CUSTOM_CFLAGS="-I.. -I${BUILD_DIR}/auto -O2 -march=native -Wno-cpp -Wno-unused-f
 
 case $OSTYPE in
 	darwin*)
+		CC="g++"
+		CXX="g++"
 		CUSTOM_CFLAGS="${CUSTOM_CFLAGS} -stdlib=c++"
 		;;
 esac
