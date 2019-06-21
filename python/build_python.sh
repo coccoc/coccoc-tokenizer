@@ -13,7 +13,7 @@ CUSTOM_CFLAGS="-I.. -I${BUILD_DIR}/auto -O2 -march=native -Wno-cpp -Wno-unused-f
 
 case $OSTYPE in
 	darwin*)
-		CC="g++" CXX="g++" CFLAGS="${CUSTOM_CFLAGS} -stdlib=c++" python3 setup.py "$@"
+		CC="g++" CXX="g++" CFLAGS="${CUSTOM_CFLAGS} -stdlib=libc++" python3 setup.py "$@"
 		;;
 	*)
 		CFLAGS="${CUSTOM_CFLAGS}" python3 setup.py "$@"
