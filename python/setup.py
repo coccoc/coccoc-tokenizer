@@ -7,8 +7,6 @@ ext_modules = [
     Extension(
         name="CocCocTokenizer",
         sources=["CocCocTokenizer.pyx"],
-        extra_compile_args=["-Wno-cpp", "-Wno-unused-function", "-O2", "-march=native"],
-        extra_link_args=["-O2", "-march=native"],
         language="c++",
     )
 ]

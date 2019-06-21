@@ -9,5 +9,13 @@ cd `dirname $0`
 BUILD_DIR="$1"
 shift
 
-CFLAGS="-I.. -I${BUILD_DIR}/auto" python3 setup.py "$@"
+CUSTOM_CFLAGS="-I.. -I${BUILD_DIR}/auto -O2 -march=native -Wno-cpp -Wno-unused-function -std=c++11"
+
+case $OSTYPE in
+	darwin*)
+		CUSTOM_CFLAGS="${CUSTOM_CFLAGS} -stdlib=c++"
+		;;
+esac
+
+CFLAGS="${CUSTOM_CFLAGS}" python3 setup.py "$@"
 

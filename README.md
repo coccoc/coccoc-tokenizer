@@ -34,6 +34,13 @@ Building debian package can be done with debhelper tools:
 $ dpkg-buildpackage <options> # from source tree root
 ```
 
+If you want to build and install everything into your sandbox, you can use something like this (it will build everything and install into ~/.local, which is considered as a standard sandbox PREFIX by many applications and frameworks):
+```
+$ mdkir build && cd build
+$ cmake -DBUILD_JAVA=1 -DBUILD_PYTHON=1 -DCMAKE_INSTALL_PREFIX=~/.local ..
+$ make install
+```
+
 ## Using the tools
 
 Both tools will show their usage with `--help` option. Both tools can accept either command line arguments or stdin as an input (if both provided, command line arguments are preferred). If stdin is used, each line is considered as one separate argument. The output format is TAB-separated tokens of the original phrase (note that Vietnamese tokens can have whitespaces inside). There's a few examples of usage below.
