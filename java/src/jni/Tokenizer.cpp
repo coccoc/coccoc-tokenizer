@@ -4,7 +4,7 @@
 #include <vector>
 #include <cassert>
 #include <tokenizer/tokenizer.hpp>
-#include "Tokenizer.h"
+#include "com_coccoc_Tokenizer.h"
 
 JNIEXPORT jlong JNICALL Java_com_coccoc_Tokenizer_segmentPointer(
 	JNIEnv *env, jobject obj, jstring jni_text, jboolean for_transforming, jint tokenize_option)
