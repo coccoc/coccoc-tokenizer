@@ -10,7 +10,7 @@
 struct tokenizer_option
 {
 	bool no_sticky;
-	bool keep_puncts;
+	int keep_puncts;
 	bool for_transforming;
 	int tokenize_option;
 	int format;
@@ -18,7 +18,7 @@ struct tokenizer_option
 
 	tokenizer_option()
 	    : no_sticky(false),
-		  keep_puncts(false),
+		  keep_puncts(-1),
 		  for_transforming(false),
 	      tokenize_option(Tokenizer::TOKENIZE_NORMAL),
 	      format(FORMAT_TSV),
@@ -135,8 +135,11 @@ int main(int argc, char **argv)
 
 	auto process = [&opts](const std::string &text)
 	{
+		if (opts.keep_puncts == -1) {
+			opts.keep_puncts = opts.for_transforming;
+		}
 		std::vector< FullToken > res = opts.format != FORMAT_ORIGINAL ?
-			Tokenizer::instance().segment(text, opts.for_transforming, opts.keep_puncts, opts.tokenize_option) :
+			Tokenizer::instance().segment(text, opts.for_transforming, opts.tokenize_option, opts.keep_puncts) :
 			Tokenizer::instance().segment_original(text, opts.tokenize_option);
 
 		if (opts.format == FORMAT_ORIGINAL)

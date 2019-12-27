@@ -399,12 +399,8 @@ public:
 		std::vector< int > &space_positions,
 		bool for_transforming = false,
 		bool tokenize_sticky = true,
-		bool keep_puncts = false)
+		bool keep_puncts = true)
 	{
-		if (for_transforming) {
-			keep_puncts = true;
-		}
-
 		std::vector< double > best_scores(length + 1, 0);
 		std::vector< int > trace(length + 1, -1);
 		std::vector< bool > is_special(length + 1, 0);
@@ -961,7 +957,7 @@ public:
 		text.swap(new_text);
 		original_pos.swap(new_original_pos);
 		run_tokenize< T >(
-			text.data(), text.size(), ranges, space_positions, for_transforming, false, true);
+			text.data(), text.size(), ranges, space_positions, for_transforming, false, false);
 	}
 
 	template < class T >
@@ -1004,8 +1000,31 @@ public:
 		std::vector< int > &space_positions,
 		std::vector< int > &original_pos,
 		bool for_transforming,
-		bool keep_puncts,
 		int tokenize_option)
+	{
+		handle_tokenization_request(
+			text,
+			ranges,
+			space_positions,
+			original_pos,
+			for_transforming,
+			tokenize_option,
+			for_transforming
+		);
+	}
+
+	/*
+	** compositor
+	** used in both JNI and C++
+	*/
+	template < class T >
+	void handle_tokenization_request(std::vector< uint32_t > &text,
+		std::vector< T > &ranges,
+		std::vector< int > &space_positions,
+		std::vector< int > &original_pos,
+		bool for_transforming,
+		int tokenize_option,
+		bool keep_puncts)
 	{
 
 		if (tokenize_option == TOKENIZE_NORMAL)
@@ -1034,7 +1053,22 @@ public:
 	** used in C++ code
 	*/
 	std::vector< FullToken > segment(
-		const std::string &original_text, bool for_transforming = false, bool keep_puncts = false, int tokenize_option = TOKENIZE_NORMAL)
+		const std::string &original_text, bool for_transforming = false, int tokenize_option = TOKENIZE_NORMAL)
+	{
+		return segment(
+			original_text,
+			for_transforming,
+			tokenize_option,
+			for_transforming
+		);
+	}
+
+	/*
+	** wrapper function
+	** used in C++ code
+	*/
+	std::vector< FullToken > segment(
+		const std::string &original_text, bool for_transforming, int tokenize_option, bool keep_puncts)
 	{
 		std::vector< uint32_t > text;
 		std::vector< int > original_pos;
@@ -1044,7 +1078,7 @@ public:
 		std::vector< int > space_positions;
 
 		handle_tokenization_request< FullToken >(
-			text, res, space_positions, original_pos, for_transforming, keep_puncts, tokenize_option);
+			text, res, space_positions, original_pos, for_transforming, tokenize_option, keep_puncts);
 
 		if (tokenize_option == TOKENIZE_URL) space_positions.clear(); // space_positions is not necessary for normalized text
 
