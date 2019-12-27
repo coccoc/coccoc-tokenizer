@@ -399,8 +399,11 @@ public:
 		std::vector< int > &space_positions,
 		bool for_transforming = false,
 		bool tokenize_sticky = true,
-		bool dont_push_puncts = false)
+		bool keep_puncts = false)
 	{
+		if (for_transforming) {
+			keep_puncts = true;
+		}
 
 		std::vector< double > best_scores(length + 1, 0);
 		std::vector< int > trace(length + 1, -1);
@@ -663,7 +666,7 @@ public:
 		}
 
 		// Now ranges store tokens in reverse order (from end to begin of the text)
-		if (for_transforming)
+		if (keep_puncts)
 		{
 			// push back the tokens and puncts in reverse order
 			int sum_length = 0;
@@ -679,41 +682,48 @@ public:
 			while (!temp.empty())
 			{
 				// shouldn't push PUNCTS between URL-parts
-				if (!dont_push_puncts &&
-					!(inside_url &&
-						(temp.back().is_url_related() ||
-							(temp.back().seg_type == T::SKIP_SEG_TYPE &&
-								text[temp.back().normalized_start - 1] == '.'))))
+				if (!(inside_url && (temp.back().is_url_related() ||
+							    (temp.back().seg_type == T::SKIP_SEG_TYPE &&
+								    text[temp.back().normalized_start - 1] == '.'))))
 				{
 					while (last_pos < temp.back().normalized_start)
 					{
-						ranges.push_back({last_pos, last_pos + 1});
-						ranges.back().type = text[last_pos] == ' ' ? T::SPACE : T::PUNCT;
+						if (!(!for_transforming && text[last_pos] == ' '))
+						{
+							ranges.push_back({last_pos, last_pos + 1});
+							ranges.back().type =
+								text[last_pos] == ' ' ? T::SPACE : T::PUNCT;
+						}
 						last_pos++;
 					}
 				}
 				ranges.push_back(temp.back());
-				// convention from CompositeTokenizer. convert SPACE to UNDERSCORE, convert UNDERSCORE
-				// in special_terms to '~'
-				for (int i = temp.back().normalized_start; i < temp.back().normalized_end; ++i)
+				if (for_transforming)
 				{
-					if (text[i] == '_') text[i] = '~';
-					if (text[i] == ' ') text[i] = '_';
+					// convention from CompositeTokenizer. convert SPACE to UNDERSCORE, convert
+					// UNDERSCORE in special_terms to '~'
+					for (int i = temp.back().normalized_start; i < temp.back().normalized_end; ++i)
+					{
+						if (text[i] == '_') text[i] = '~';
+						if (text[i] == ' ') text[i] = '_';
+					}
 				}
 				last_pos = temp.back().normalized_end;
 				inside_url = temp.back().is_url_related();
 				temp.pop_back();
 			}
 			// PUNCTs at the end of the text
-			if (!dont_push_puncts)
+			while (last_pos < length)
 			{
-				while (last_pos < length)
+				if (!(!for_transforming && text[last_pos] == ' '))
 				{
 					ranges.push_back({last_pos, last_pos + 1});
 					ranges.back().type = text[last_pos] == ' ' ? T::SPACE : T::PUNCT;
-					last_pos++;
 				}
+				last_pos++;
 			}
+			// some spaces may be left out, so reserved length may be longer than actual length.
+			ranges.shrink_to_fit();
 		}
 		else
 		{
@@ -994,13 +1004,14 @@ public:
 		std::vector< int > &space_positions,
 		std::vector< int > &original_pos,
 		bool for_transforming,
+		bool keep_puncts,
 		int tokenize_option)
 	{
 
 		if (tokenize_option == TOKENIZE_NORMAL)
 		{
 			Tokenizer::instance().run_tokenize< T >(
-				text.data(), text.size(), ranges, space_positions, for_transforming);
+				text.data(), text.size(), ranges, space_positions, for_transforming, true, keep_puncts);
 		}
 		else if (tokenize_option == TOKENIZE_HOST)
 		{
@@ -1023,7 +1034,7 @@ public:
 	** used in C++ code
 	*/
 	std::vector< FullToken > segment(
-		const std::string &original_text, bool for_transforming = false, int tokenize_option = TOKENIZE_NORMAL)
+		const std::string &original_text, bool for_transforming = false, bool keep_puncts = false, int tokenize_option = TOKENIZE_NORMAL)
 	{
 		std::vector< uint32_t > text;
 		std::vector< int > original_pos;
@@ -1033,7 +1044,7 @@ public:
 		std::vector< int > space_positions;
 
 		handle_tokenization_request< FullToken >(
-			text, res, space_positions, original_pos, for_transforming, tokenize_option);
+			text, res, space_positions, original_pos, for_transforming, keep_puncts, tokenize_option);
 
 		if (tokenize_option == TOKENIZE_URL) space_positions.clear(); // space_positions is not necessary for normalized text
 
@@ -1068,7 +1079,7 @@ public:
 		std::vector< int > space_positions;
 
 		handle_tokenization_request< FullToken >(
-			text, res, space_positions, original_pos, false, tokenize_option);
+			text, res, space_positions, original_pos, false, false, tokenize_option);
 
 		for (int &pos : space_positions) pos = original_pos[pos];
 		space_positions.push_back(-1);
@@ -1148,7 +1159,7 @@ public:
 
 		// using for_transforming to keep punctuations
 		handle_tokenization_request< FullToken >(
-			text, res, space_positions, original_pos, /*for_transforming*/ true, tokenize_option);
+			text, res, space_positions, original_pos, /*for_transforming*/ true, false, tokenize_option);
 
 		for (int &pos : space_positions) pos = original_pos[pos];
 		space_positions.push_back(-1);

@@ -10,12 +10,16 @@
 struct tokenizer_option
 {
 	bool no_sticky;
+	bool keep_puncts;
+	bool for_transforming;
 	int tokenize_option;
 	int format;
 	const char *dict_path;
 
 	tokenizer_option()
 	    : no_sticky(false),
+		  keep_puncts(false),
+		  for_transforming(false),
 	      tokenize_option(Tokenizer::TOKENIZE_NORMAL),
 	      format(FORMAT_TSV),
 	      dict_path(DICT_PATH)
@@ -29,6 +33,8 @@ static struct option options[] = {
 	{ "no-sticky"    , no_argument      , NULL, 'n' },
 	{ "url"          , no_argument      , NULL, 'u' },
 	{ "host"         , no_argument      , NULL, 'h' },
+	{ "keep-puncts"  , no_argument      , NULL, 'k' },
+	{ "transform"    , no_argument      , NULL, 't' },
 	{ "format"       , required_argument, NULL, 'f' },
 	{ "dict-path"    , required_argument, NULL, 'd' },
 	{  NULL          , 0                , NULL,  0  }
@@ -45,6 +51,8 @@ int print_tokenizer_usage(int argc, char **argv)
 		"    -n, --no-sticky        : do not split sticky text\n"
 		"    -u, --url              : segment URL\n"
 		"    -h, --host             : segment HOST\n"
+		"    -k, --keep-puncts      : keep PUNCT tokens\n"
+		"    -t, --transform        : segment for transformation\n"
 		"    -f, --format <format>  : output format (tsv, original, verbose)\n"
 		"    -d, --dict-path <path> : dictionaries path, default is " DICT_PATH "\n"
 		"        --help             : show this message\n"
@@ -96,6 +104,12 @@ int tokenizer_getopt_parse(int argc, char **argv, tokenizer_option &opts)
 		case 'd':
 			opts.dict_path = optarg;
 			break;
+		case 'k':
+			opts.keep_puncts = true;
+			break;
+		case 't':
+			opts.for_transforming = true;
+			break;
 		default:
 			return -1;
 		}
@@ -122,7 +136,7 @@ int main(int argc, char **argv)
 	auto process = [&opts](const std::string &text)
 	{
 		std::vector< FullToken > res = opts.format != FORMAT_ORIGINAL ?
-			Tokenizer::instance().segment(text, false, opts.tokenize_option) :
+			Tokenizer::instance().segment(text, opts.for_transforming, opts.keep_puncts, opts.tokenize_option) :
 			Tokenizer::instance().segment_original(text, opts.tokenize_option);
 
 		if (opts.format == FORMAT_ORIGINAL)
