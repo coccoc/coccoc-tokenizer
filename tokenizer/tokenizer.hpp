@@ -1113,7 +1113,7 @@ public:
 		std::vector< int > space_positions;
 
 		handle_tokenization_request< FullToken >(
-			text, res, space_positions, original_pos, false, false, tokenize_option);
+			text, res, space_positions, original_pos, false, tokenize_option);
 
 		for (int &pos : space_positions) pos = original_pos[pos];
 		space_positions.push_back(-1);
@@ -1193,7 +1193,7 @@ public:
 
 		// using for_transforming to keep punctuations
 		handle_tokenization_request< FullToken >(
-			text, res, space_positions, original_pos, /*for_transforming*/ true, false, tokenize_option);
+			text, res, space_positions, original_pos, /*for_transforming*/ true, tokenize_option);
 
 		for (int &pos : space_positions) pos = original_pos[pos];
 		space_positions.push_back(-1);
