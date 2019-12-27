@@ -684,7 +684,7 @@ public:
 				{
 					while (last_pos < temp.back().normalized_start)
 					{
-						if (!(!for_transforming && text[last_pos] == ' '))
+						if (for_transforming || text[last_pos] != ' ')
 						{
 							ranges.push_back({last_pos, last_pos + 1});
 							ranges.back().type =
@@ -711,7 +711,7 @@ public:
 			// PUNCTs at the end of the text
 			while (last_pos < length)
 			{
-				if (!(!for_transforming && text[last_pos] == ' '))
+				if (for_transforming || text[last_pos] != ' ')
 				{
 					ranges.push_back({last_pos, last_pos + 1});
 					ranges.back().type = text[last_pos] == ' ' ? T::SPACE : T::PUNCT;
