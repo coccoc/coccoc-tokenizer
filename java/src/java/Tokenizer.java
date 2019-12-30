@@ -9,7 +9,7 @@ public class Tokenizer {
 	public static final int TOKENIZE_URL = 2;
 	public static final String dictPath = "/usr/share/tokenizer/dicts"; // TODO: don't hardcode this value
 
-	public native long segmentPointer(String text, boolean for_transforming, boolean keep_puncts, int tokenizeOption);
+	public native long segmentPointer(String text, boolean for_transforming, int tokenizeOption, boolean keep_puncts);
 	private native void freeMemory(long resPointer);
 	private native int initialize(String dictPath);
 
@@ -37,7 +37,7 @@ public class Tokenizer {
 		}
 	}
 
-	public ArrayList<Token> segment(String text, boolean for_transforming, boolean keep_puncts, int tokenizeOption) {
+	public ArrayList<Token> segment(String text, boolean for_transforming, int tokenizeOption, boolean keep_puncts) {
 		if (text == null) {
 			throw new IllegalArgumentException("text is null");
 		}
@@ -88,7 +88,7 @@ public class Tokenizer {
 	}
 
 	public ArrayList<Token> segment(String text, boolean for_transforming, int tokenizeOption) {
-		return segment(text, for_transforming, false, tokenizeOption);
+		return segment(text, for_transforming, tokenizeOption, false);
 	}
 
 	public ArrayList<Token> segment(String text, int tokenizeOption) {
