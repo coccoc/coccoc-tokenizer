@@ -41,7 +41,7 @@ public class Tokenizer {
 		if (text == null) {
 			throw new IllegalArgumentException("text is null");
 		}
-		long resPointer = segmentPointer(text, for_transforming, keep_puncts, tokenizeOption);
+		long resPointer = segmentPointer(text, for_transforming, tokenizeOption, keep_puncts);
 
 		ArrayList<Token> res = new ArrayList<>();
 		// Positions from JNI implementation .cpp file
@@ -88,7 +88,7 @@ public class Tokenizer {
 	}
 
 	public ArrayList<Token> segment(String text, boolean for_transforming, int tokenizeOption) {
-		return segment(text, for_transforming, tokenizeOption, false);
+		return segment(text, for_transforming, tokenizeOption, for_transforming);
 	}
 
 	public ArrayList<Token> segment(String text, int tokenizeOption) {
@@ -105,6 +105,14 @@ public class Tokenizer {
 
 	public ArrayList<String> segmentToStringList(String text) {
 		return Token.toStringList(segment(text, false));
+	}
+
+	public ArrayList<Token> segmentKeepPuncts(String text) {
+		return segment(text, false, TOKENIZE_NORMAL, true);
+	}
+
+	public ArrayList<String> segmentKeepPunctsToStringList(String text) {
+		return Token.toStringList(segmentKeepPuncts(text));
 	}
 
 	public ArrayList<Token> segmentUrl(String text) {

@@ -108,6 +108,17 @@ private:
 		return 0;
 	}
 
+	std::vector< std::string > to_string_list(const std::vector< FullToken > &tokens)
+	{
+		std::vector< std::string > res;
+		res.reserve(tokens.size());
+		for (auto it : tokens)
+		{
+			res.push_back(it.text);
+		}
+		return res;
+	}
+
 public:
 	Tokenizer()
 	{
@@ -1174,12 +1185,7 @@ public:
 		const std::string &text, bool for_transforming = false, int tokenize_option = TOKENIZE_NORMAL)
 	{
 		std::vector< FullToken > full_res = segment(text, for_transforming, tokenize_option);
-		std::vector< std::string > res;
-		for (auto it : full_res)
-		{
-			res.push_back(it.text);
-		}
-		return res;
+		return to_string_list(full_res);
 	}
 
 	// reimplement of segment_original for general purpose (python wrapping)
@@ -1222,6 +1228,42 @@ public:
 				  res.end());
 
 		return res;
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< FullToken > segment_keep_puncts(const std::string &original_text)
+	{
+		return segment(original_text, false, TOKENIZE_NORMAL, true);
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< std::string > segment_keep_puncts_to_string_list(const std::string &original_text)
+	{
+		return to_string_list(segment_keep_puncts(original_text));
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< FullToken > segment_url(const std::string &original_text)
+	{
+		return segment(original_text, false, TOKENIZE_URL);
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< std::string > segment_url_to_string_list(const std::string &original_text)
+	{
+		return to_string_list(segment_url(original_text));
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< FullToken > segment_for_transforming(const std::string &original_text)
+	{
+		return segment(original_text, true, TOKENIZE_NORMAL);
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< FullToken > segment_for_transforming(const std::string &original_text, int tokenize_option)
+	{
+		return segment(original_text, true, tokenize_option);
 	}
 };
 
