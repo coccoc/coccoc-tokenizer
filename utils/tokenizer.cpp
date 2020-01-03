@@ -69,7 +69,7 @@ int print_tokenizer_usage(int argc, char **argv)
 int tokenizer_getopt_parse(int argc, char **argv, tokenizer_option &opts)
 {
 	int option_code;
-	while (~(option_code = getopt_long(argc, argv, "nuhf:d:", options, NULL)))
+	while (~(option_code = getopt_long(argc, argv, "nuhf:d:kt", options, NULL)))
 	{
 		switch (option_code)
 		{
