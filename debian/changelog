@@ -1,3 +1,12 @@
+coccoc-tokenizer (1.5) stable; urgency=medium
+
+  * added option to keep punctuations in normal tokenization
+  * added option to run tokenization for transformation in CLI
+  * added wrapper functions in C++ implementation, for ease of use
+  * breaking change: dont_push_puncts param in segment() now becomes keep_puncts, which is used to keep punctuations in both normal tokenization and tokenization for transformation
+
+ -- Tran Minh Hieu <hieutm@coccoc.com> Fri, 03 Jan 2020 10:50:00 +0700
+
 coccoc-tokenizer (1.4) stable; urgency=medium
 
   * added debian package for python bindings

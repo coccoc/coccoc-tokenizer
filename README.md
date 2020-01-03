@@ -74,6 +74,16 @@ anh	yêu	em
 bún	chả	ở	nhà hàng	quán ăn	ngon	ko	ngon
 ```
 
+Whitespaces and punctuations are ignored during normal tokenization, but are kept during tokenization for transformation, which is used internally by Coc Coc search engine. To keep punctuations during normal tokenization, except those in segmented URLs, use `-k`. To run tokenization for transformation, use `-t` - notice that this will format result by replacing spaces in multi-syllable tokens with `_` and `_` with `~`.
+
+```
+$ tokenizer "toisongohanoi, tôi đăng ký trên thegioididong.vn" -k
+toisongohanoi   ,       tôi     đăng ký trên    the gioi        di dong vn
+
+$ tokenizer "toisongohanoi, tôi đăng ký trên thegioididong.vn" -t
+toisongohanoi   ,               tôi             đăng_ký         trên            the_gioi        di_dong vn
+```
+
 The usage of `vn_lang_tool` is pretty similar, you can see full list of options for both tools by using:
 
 ```
