@@ -7,7 +7,7 @@
 #include "com_coccoc_Tokenizer.h"
 
 JNIEXPORT jlong JNICALL Java_com_coccoc_Tokenizer_segmentPointer(
-	JNIEnv *env, jobject obj, jstring jni_text, jboolean for_transforming, jint tokenize_option)
+	JNIEnv *env, jobject obj, jstring jni_text, jboolean for_transforming, jint tokenize_option, jboolean keep_puncts)
 {
 	// Use shared-memory instead of message-passing mechanism to transfer data to Java
 	// return a pointer to an array of pointers
@@ -26,7 +26,7 @@ JNIEXPORT jlong JNICALL Java_com_coccoc_Tokenizer_segmentPointer(
 	std::vector< int > *space_positions = new std::vector< int >();
 
 	Tokenizer::instance().handle_tokenization_request< Token >(
-		*text, *ranges, *space_positions, original_pos, for_transforming, tokenize_option);
+		*text, *ranges, *space_positions, original_pos, for_transforming, tokenize_option, keep_puncts);
 	for (size_t i = 0; i < ranges->size(); ++i)
 	{
 		ranges->at(i).original_start += original_pos[ranges->at(i).normalized_start];

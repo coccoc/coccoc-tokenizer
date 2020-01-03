@@ -108,6 +108,17 @@ private:
 		return 0;
 	}
 
+	std::vector< std::string > to_string_list(const std::vector< FullToken > &tokens)
+	{
+		std::vector< std::string > res;
+		res.reserve(tokens.size());
+		for (auto it : tokens)
+		{
+			res.push_back(it.text);
+		}
+		return res;
+	}
+
 public:
 	Tokenizer()
 	{
@@ -399,9 +410,8 @@ public:
 		std::vector< int > &space_positions,
 		bool for_transforming = false,
 		bool tokenize_sticky = true,
-		bool dont_push_puncts = false)
+		bool keep_puncts = true)
 	{
-
 		std::vector< double > best_scores(length + 1, 0);
 		std::vector< int > trace(length + 1, -1);
 		std::vector< bool > is_special(length + 1, 0);
@@ -663,7 +673,7 @@ public:
 		}
 
 		// Now ranges store tokens in reverse order (from end to begin of the text)
-		if (for_transforming)
+		if (keep_puncts)
 		{
 			// push back the tokens and puncts in reverse order
 			int sum_length = 0;
@@ -679,41 +689,48 @@ public:
 			while (!temp.empty())
 			{
 				// shouldn't push PUNCTS between URL-parts
-				if (!dont_push_puncts &&
-					!(inside_url &&
-						(temp.back().is_url_related() ||
-							(temp.back().seg_type == T::SKIP_SEG_TYPE &&
-								text[temp.back().normalized_start - 1] == '.'))))
+				if (!(inside_url && (temp.back().is_url_related() ||
+							    (temp.back().seg_type == T::SKIP_SEG_TYPE &&
+								    text[temp.back().normalized_start - 1] == '.'))))
 				{
 					while (last_pos < temp.back().normalized_start)
 					{
-						ranges.push_back({last_pos, last_pos + 1});
-						ranges.back().type = text[last_pos] == ' ' ? T::SPACE : T::PUNCT;
+						if (for_transforming || text[last_pos] != ' ')
+						{
+							ranges.push_back({last_pos, last_pos + 1});
+							ranges.back().type =
+								text[last_pos] == ' ' ? T::SPACE : T::PUNCT;
+						}
 						last_pos++;
 					}
 				}
 				ranges.push_back(temp.back());
-				// convention from CompositeTokenizer. convert SPACE to UNDERSCORE, convert UNDERSCORE
-				// in special_terms to '~'
-				for (int i = temp.back().normalized_start; i < temp.back().normalized_end; ++i)
+				if (for_transforming)
 				{
-					if (text[i] == '_') text[i] = '~';
-					if (text[i] == ' ') text[i] = '_';
+					// convention from CompositeTokenizer. convert SPACE to UNDERSCORE, convert
+					// UNDERSCORE in special_terms to '~'
+					for (int i = temp.back().normalized_start; i < temp.back().normalized_end; ++i)
+					{
+						if (text[i] == '_') text[i] = '~';
+						if (text[i] == ' ') text[i] = '_';
+					}
 				}
 				last_pos = temp.back().normalized_end;
 				inside_url = temp.back().is_url_related();
 				temp.pop_back();
 			}
 			// PUNCTs at the end of the text
-			if (!dont_push_puncts)
+			while (last_pos < length)
 			{
-				while (last_pos < length)
+				if (for_transforming || text[last_pos] != ' ')
 				{
 					ranges.push_back({last_pos, last_pos + 1});
 					ranges.back().type = text[last_pos] == ' ' ? T::SPACE : T::PUNCT;
-					last_pos++;
 				}
+				last_pos++;
 			}
+			// some spaces may be left out, so reserved length may be longer than actual length.
+			ranges.shrink_to_fit();
 		}
 		else
 		{
@@ -951,7 +968,7 @@ public:
 		text.swap(new_text);
 		original_pos.swap(new_original_pos);
 		run_tokenize< T >(
-			text.data(), text.size(), ranges, space_positions, for_transforming, false, true);
+			text.data(), text.size(), ranges, space_positions, for_transforming, false, false);
 	}
 
 	template < class T >
@@ -996,11 +1013,35 @@ public:
 		bool for_transforming,
 		int tokenize_option)
 	{
+		handle_tokenization_request(
+			text,
+			ranges,
+			space_positions,
+			original_pos,
+			for_transforming,
+			tokenize_option,
+			for_transforming
+		);
+	}
+
+	/*
+	** compositor
+	** used in both JNI and C++
+	*/
+	template < class T >
+	void handle_tokenization_request(std::vector< uint32_t > &text,
+		std::vector< T > &ranges,
+		std::vector< int > &space_positions,
+		std::vector< int > &original_pos,
+		bool for_transforming,
+		int tokenize_option,
+		bool keep_puncts)
+	{
 
 		if (tokenize_option == TOKENIZE_NORMAL)
 		{
 			Tokenizer::instance().run_tokenize< T >(
-				text.data(), text.size(), ranges, space_positions, for_transforming);
+				text.data(), text.size(), ranges, space_positions, for_transforming, true, keep_puncts);
 		}
 		else if (tokenize_option == TOKENIZE_HOST)
 		{
@@ -1025,6 +1066,21 @@ public:
 	std::vector< FullToken > segment(
 		const std::string &original_text, bool for_transforming = false, int tokenize_option = TOKENIZE_NORMAL)
 	{
+		return segment(
+			original_text,
+			for_transforming,
+			tokenize_option,
+			for_transforming
+		);
+	}
+
+	/*
+	** wrapper function
+	** used in C++ code
+	*/
+	std::vector< FullToken > segment(
+		const std::string &original_text, bool for_transforming, int tokenize_option, bool keep_puncts)
+	{
 		std::vector< uint32_t > text;
 		std::vector< int > original_pos;
 		normalize_for_tokenization(original_text, text, original_pos);
@@ -1033,7 +1089,7 @@ public:
 		std::vector< int > space_positions;
 
 		handle_tokenization_request< FullToken >(
-			text, res, space_positions, original_pos, for_transforming, tokenize_option);
+			text, res, space_positions, original_pos, for_transforming, tokenize_option, keep_puncts);
 
 		if (tokenize_option == TOKENIZE_URL) space_positions.clear(); // space_positions is not necessary for normalized text
 
@@ -1129,12 +1185,7 @@ public:
 		const std::string &text, bool for_transforming = false, int tokenize_option = TOKENIZE_NORMAL)
 	{
 		std::vector< FullToken > full_res = segment(text, for_transforming, tokenize_option);
-		std::vector< std::string > res;
-		for (auto it : full_res)
-		{
-			res.push_back(it.text);
-		}
-		return res;
+		return to_string_list(full_res);
 	}
 
 	// reimplement of segment_original for general purpose (python wrapping)
@@ -1177,6 +1228,42 @@ public:
 				  res.end());
 
 		return res;
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< FullToken > segment_keep_puncts(const std::string &original_text)
+	{
+		return segment(original_text, false, TOKENIZE_NORMAL, true);
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< std::string > segment_keep_puncts_to_string_list(const std::string &original_text)
+	{
+		return to_string_list(segment_keep_puncts(original_text));
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< FullToken > segment_url(const std::string &original_text)
+	{
+		return segment(original_text, false, TOKENIZE_URL);
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< std::string > segment_url_to_string_list(const std::string &original_text)
+	{
+		return to_string_list(segment_url(original_text));
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< FullToken > segment_for_transforming(const std::string &original_text)
+	{
+		return segment(original_text, true, TOKENIZE_NORMAL);
+	}
+
+	// wrapper function matching Java binding, for ease of use
+	std::vector< FullToken > segment_for_transforming(const std::string &original_text, int tokenize_option)
+	{
+		return segment(original_text, true, tokenize_option);
 	}
 };
 

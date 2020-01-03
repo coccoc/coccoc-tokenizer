@@ -9,7 +9,7 @@ public class Tokenizer {
 	public static final int TOKENIZE_URL = 2;
 	public static final String dictPath = "/usr/share/tokenizer/dicts"; // TODO: don't hardcode this value
 
-	public native long segmentPointer(String text, boolean for_transforming, int tokenizeOption);
+	public native long segmentPointer(String text, boolean for_transforming, int tokenizeOption, boolean keep_puncts);
 	private native void freeMemory(long resPointer);
 	private native int initialize(String dictPath);
 
@@ -37,11 +37,11 @@ public class Tokenizer {
 		}
 	}
 
-	public ArrayList<Token> segment(String text, boolean for_transforming, int tokenizeOption) {
+	public ArrayList<Token> segment(String text, boolean for_transforming, int tokenizeOption, boolean keep_puncts) {
 		if (text == null) {
 			throw new IllegalArgumentException("text is null");
 		}
-		long resPointer = segmentPointer(text, for_transforming, tokenizeOption);
+		long resPointer = segmentPointer(text, for_transforming, tokenizeOption, keep_puncts);
 
 		ArrayList<Token> res = new ArrayList<>();
 		// Positions from JNI implementation .cpp file
@@ -87,6 +87,10 @@ public class Tokenizer {
 		return res;
 	}
 
+	public ArrayList<Token> segment(String text, boolean for_transforming, int tokenizeOption) {
+		return segment(text, for_transforming, tokenizeOption, for_transforming);
+	}
+
 	public ArrayList<Token> segment(String text, int tokenizeOption) {
 		return segment(text, false, tokenizeOption);
 	}
@@ -101,6 +105,14 @@ public class Tokenizer {
 
 	public ArrayList<String> segmentToStringList(String text) {
 		return Token.toStringList(segment(text, false));
+	}
+
+	public ArrayList<Token> segmentKeepPuncts(String text) {
+		return segment(text, false, TOKENIZE_NORMAL, true);
+	}
+
+	public ArrayList<String> segmentKeepPunctsToStringList(String text) {
+		return Token.toStringList(segmentKeepPuncts(text));
 	}
 
 	public ArrayList<Token> segmentUrl(String text) {
