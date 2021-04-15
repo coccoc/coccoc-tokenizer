@@ -56,7 +56,13 @@ IF (${BUILD_JAVA})
 		VERBATIM
 	)
 	INSTALL (FILES ${CMAKE_BINARY_DIR}/coccoc-tokenizer.jar DESTINATION share/java)
-	INSTALL (FILES ${CMAKE_BINARY_DIR}/libcoccoc_tokenizer_jni.so DESTINATION lib)
+
+	IF(CMAKE_SYSTEM_NAME STREQUAL Darwin)
+		INSTALL (FILES ${CMAKE_BINARY_DIR}/libcoccoc_tokenizer_jni.dylib DESTINATION lib)
+	ELSE ()
+		INSTALL (FILES ${CMAKE_BINARY_DIR}/libcoccoc_tokenizer_jni.so DESTINATION lib)
+	ENDIF ()
+
 ENDIF ()
 
 IF (${BUILD_PYTHON})
