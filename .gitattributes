@@ -1,0 +1,2 @@
+# Treat compiled dict binary files as binary — no line-ending conversion or diffing
+*.bin binary

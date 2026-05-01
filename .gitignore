@@ -1,5 +1,9 @@
-build
-install
+/build
+/install
 python/*.c
 python/*.cpp
 python/*.html
+
+.worktrees
+.serena/
+.claude/

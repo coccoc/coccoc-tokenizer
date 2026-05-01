@@ -48,23 +48,6 @@ INSTALL (FILES ${CMAKE_BINARY_DIR}/${MULTITERM_DICT_DUMP} DESTINATION share/toke
 INSTALL (FILES ${CMAKE_BINARY_DIR}/${SYLLABLE_DICT_DUMP} DESTINATION share/tokenizer/dicts)
 INSTALL (FILES ${CMAKE_BINARY_DIR}/${NONTONE_PAIR_DICT_DUMP} DESTINATION share/tokenizer/dicts)
 
-IF (${BUILD_JAVA})
-	ADD_CUSTOM_TARGET (compile_java ALL DEPENDS ${CMAKE_BINARY_DIR}/coccoc-tokenizer.jar)
-	ADD_CUSTOM_COMMAND (
-		OUTPUT ${CMAKE_BINARY_DIR}/coccoc-tokenizer.jar
-		COMMAND ${CMAKE_SOURCE_DIR}/java/build_java.sh ${CMAKE_BINARY_DIR}
-		VERBATIM
-	)
-	INSTALL (FILES ${CMAKE_BINARY_DIR}/coccoc-tokenizer.jar DESTINATION share/java)
-
-	IF(CMAKE_SYSTEM_NAME STREQUAL Darwin)
-		INSTALL (FILES ${CMAKE_BINARY_DIR}/libcoccoc_tokenizer_jni.dylib DESTINATION lib)
-	ELSE ()
-		INSTALL (FILES ${CMAKE_BINARY_DIR}/libcoccoc_tokenizer_jni.so DESTINATION lib)
-	ENDIF ()
-
-ENDIF ()
-
 IF (${BUILD_PYTHON})
 	# XXX Some build files in this target are generated inside source tree, should fix later
 	ADD_CUSTOM_TARGET (compile_python ALL DEPENDS ${CMAKE_BINARY_DIR}/python/lib)

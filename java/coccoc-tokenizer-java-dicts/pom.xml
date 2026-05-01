@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.coccoc</groupId>
+    <artifactId>coccoc-tokenizer-java-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>coccoc-tokenizer-java-dicts</artifactId>
+  <packaging>jar</packaging>
+
+  <name>coccoc-tokenizer-java-dicts</name>
+  <description>Compiled dictionary data for the CocCoc Vietnamese tokenizer</description>
+
+  <!-- No Java sources — only bundled binary dict resources under
+       src/main/resources/com/coccoc/dicts/*.bin
+       To regenerate: mvn -pl coccoc-tokenizer-java-dicts -Pregenerate-dicts generate-resources
+         (requires coccoc-tokenizer-java to be installed first: mvn -pl coccoc-tokenizer-java install)
+         and raw dict sources at ${dicts.source.dir} (~80 MB, not committed).
+       CI verifies committed bins match a fresh recompile. -->
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- Regenerate all .bin files from raw dict sources.
+         Prerequisites:
+           1. mvn -pl coccoc-tokenizer-java install -DskipTests
+           2. Raw dicts available at ${dicts.source.dir} (default: ../dicts/)
+         Usage: mvn -pl coccoc-tokenizer-java-dicts -Pregenerate-dicts generate-resources -->
+    <profile>
+      <id>regenerate-dicts</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>compile-dicts</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>java</executable>
+                  <arguments>
+                    <argument>-cp</argument>
+                    <!-- Relies on coccoc-tokenizer-java being installed in local repo first -->
+                    <argument>${settings.localRepository}/com/coccoc/coccoc-tokenizer-java/${project.version}/coccoc-tokenizer-java-${project.version}.jar</argument>
+                    <argument>com.coccoc.tools.DictCompile</argument>
+                    <argument>${dicts.source.dir}</argument>
+                    <argument>${project.basedir}/src/main/resources/com/coccoc/dicts</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

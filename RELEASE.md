@@ -1,3 +1,33 @@
+# Java Standalone Module
+
+A pure-Java implementation of the CocCoc Vietnamese tokenizer is now available as a Maven artifact under `java/`. It does not require any native libraries or a C++ build.
+
+## Features
+
+* **Classpath dict loading** — dictionary files are bundled inside the `coccoc-tokenizer-java-dicts` jar and loaded automatically via `Tokenizer.getInstance()`. No external file path needed.
+* **Filesystem dict loading** — `Tokenizer.getInstance(String dictPath)` loads `multiterm.bin`, `syllable.bin`, and the optional `bigram.bin` from a directory on disk, matching the behaviour of the C++ library.
+* **Full segmentation modes** — `NORMAL`, `HOST`, and `URL` modes match the C++ tokenizer's output.
+* **keepPunct filtering** — the `keepPunctuation` flag (and the `segmentKeepPuncts*` convenience methods) mirrors the `-k` option in the CLI tool.
+* **Thread safety** — the `Tokenizer` singleton is safe to call concurrently from multiple threads.
+* **Java 21+** — built and tested with Temurin 21; no preview features required.
+
+## Maven coordinates
+
+```xml
+<dependency>
+  <groupId>com.coccoc</groupId>
+  <artifactId>coccoc-tokenizer-java</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
+## Notes
+
+* The bundled dict jars (`multiterm.bin` ~19 MB, `syllable.bin` ~20 MB) add ~40 MB to the classpath. `bigram.bin` is optional and improves sticky-phrase segmentation when present.
+* The int-constant API (`TOKENIZE_NORMAL`, `TOKENIZE_HOST`, `TOKENIZE_URL`) and the `segment4Transforming` / `segmentKeepPuncts` / `segmentUrl` overloads are provided for source-level compatibility with existing callers of the vendored `Tokenizer` class used in `elasticsearch-analysis-vietnamese`.
+
+---
+
 # Release 1.5
 
 ## Major Features and Improvement

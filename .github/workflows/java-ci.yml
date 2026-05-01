@@ -1,0 +1,45 @@
+name: Java CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "java/**"
+      - ".github/workflows/java-ci.yml"
+
+defaults:
+  run:
+    working-directory: java
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build + unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-java@v5.2.0
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: Build + all tests
+        env:
+          REQUIRE_DICTS: "1"
+        run: mvn -B verify
+
+      - name: Verify dicts JAR contains committed .bin files
+        run: |
+          jar tf coccoc-tokenizer-java-dicts/target/coccoc-tokenizer-java-dicts-1.0.0-SNAPSHOT.jar \
+            | grep -E "\.bin$" | sort
+          # Assert both structural tries are present
+          jar tf coccoc-tokenizer-java-dicts/target/coccoc-tokenizer-java-dicts-1.0.0-SNAPSHOT.jar \
+            | grep -q "com/coccoc/dicts/multiterm.bin"
+          jar tf coccoc-tokenizer-java-dicts/target/coccoc-tokenizer-java-dicts-1.0.0-SNAPSHOT.jar \
+            | grep -q "com/coccoc/dicts/syllable.bin"
+          echo "Dict JAR contents verified."

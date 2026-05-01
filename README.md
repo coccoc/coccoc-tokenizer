@@ -12,13 +12,7 @@ $ cmake ..
 # make install
 ```
 
-To include java bindings:
-
-```
-$ mkdir build && cd build
-$ cmake -DBUILD_JAVA=1 ..
-# make install
-```
+For the standalone pure-Java Maven module (no native libraries required), see [Using the Java library](#using-the-java-library).
 
 To include python bindings - install [cython](https://pypi.org/project/Cython/) package and compile wrapper code (only Python3 is supported):
 
@@ -37,7 +31,7 @@ $ dpkg-buildpackage <options> # from source tree root
 If you want to build and install everything into your sandbox, you can use something like this (it will build everything and install into ~/.local, which is considered as a standard sandbox PREFIX by many applications and frameworks):
 ```
 $ mdkir build && cd build
-$ cmake -DBUILD_JAVA=1 -DBUILD_PYTHON=1 -DCMAKE_INSTALL_PREFIX=~/.local ..
+$ cmake -DBUILD_PYTHON=1 -DCMAKE_INSTALL_PREFIX=~/.local ..
 $ make install
 ```
 
@@ -148,21 +142,56 @@ struct FullToken : Token {
 
 ```
 
-## Using Java bindings
+## Using the Java library
 
-A java interface is provided to be used in java projects. Internally it utilizes JNI and the Unsafe API to connect Java and C++. You can find an example of its usage in `Tokenizer` class's main function:
+A standalone pure-Java module is available as a Maven artifact. It requires no native libraries and runs on any platform with Java 21+.
 
-```
-java/src/java/Tokenizer.java
-```
+### Getting the library
 
-To run this test class from source tree, use the following command:
+Build and install the module to your local Maven repository:
 
 ```
-$ LD_LIBRARY_PATH=build java -cp build/coccoc-tokenizer.jar com.coccoc.Tokenizer "một câu văn tiếng Việt"
+$ cd java
+$ mvn install -DskipTests
 ```
 
-Normally `LD_LIBRARY_PATH` should point to a directory with `libcoccoc_tokenizer_jni.so` binary. If you have already installed deb package or `make install`-ed everything into your system, `LD_LIBRARY_PATH` is not needed as the binary will be taken from your system (`/usr/lib` or similar).
+Then add the dependency to your `pom.xml`:
+
+```xml
+<dependency>
+  <groupId>com.coccoc</groupId>
+  <artifactId>coccoc-tokenizer-java</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
+The companion `coccoc-tokenizer-java-dicts` artifact bundles the dictionary files on the classpath automatically, so no external path configuration is required.
+
+### Usage
+
+```java
+import com.coccoc.Tokenizer;
+import java.util.ArrayList;
+
+// Load from bundled classpath dicts (recommended)
+Tokenizer tokenizer = Tokenizer.getInstance();
+
+// Or load from a custom dict directory on the filesystem
+// Tokenizer tokenizer = Tokenizer.getInstance("/path/to/dicts");
+
+// Returns tokens as a list of strings; multi-syllable tokens contain a space
+ArrayList<String> tokens = tokenizer.segmentToStringList("Từng bước để trở thành một lập trình viên giỏi");
+// [từng, bước, để, trở thành, một, lập trình, viên, giỏi]
+
+// Keep punctuation in the result
+tokenizer.segmentKeepPunctsToStringList("xin chào!");
+// [xin chào, !]
+
+// URL / host tokenization
+tokenizer.segmentUrlToStringList("https://thegioididong.vn");
+```
+
+`Tokenizer` is a per-dict-path singleton and is safe to call concurrently from multiple threads.
 
 ## Using Python bindings
 
@@ -183,7 +212,7 @@ print(T.word_tokenize("xin chào, tôi là người Việt Nam", tokenize_option
 
 ## Other languages
 
-Bindings for other languages are not yet implemented but it will be nice if someone can help to write them.
+A standalone Java library is available (see above). Bindings for other languages are not yet implemented — contributions are welcome.
 
 ## Benchmark
 
@@ -231,6 +260,6 @@ We also don't apply any named entity recognition mechanisms within the tokenizer
 
 ## Future Plans
 
-We'd love to introduce bindings for Python and maybe other languages later and we'd be happy if somebody can help us doing that. We are also thinking about adding POS tagger and more complex linguistic features later.
+We are thinking about adding a POS tagger and more complex linguistic features. Bindings for other languages are welcome contributions.
 
-If you find any issues or have any suggestions regarding further upgrades, please, report them here or write us through github.
+If you find any issues or have any suggestions regarding further upgrades, please report them here or reach out through GitHub.
